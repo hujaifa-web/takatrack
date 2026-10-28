@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#087f5b">
+<title>TakaTrack - হিসাব রাখুন সহজে</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5f3;
+  color: #172b24;
+}
+
+header {
+  background: #087f5b;
+  color: white;
+  padding: 25px 18px;
+  border-radius: 0 0 24px 24px;
+}
+
+header h1 {
+  margin: 0 0 6px;
+  font-size: 27px;
+}
+
+header p {
+  margin: 0;
+  opacity: .9;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+  padding: 16px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.card {
+  background: white;
+  padding: 17px;
+  border-radius: 15px;
+  box-shadow: 0 3px 12px #00000008;
+}
+
+.card small {
+  color: #68776f;
+}
+
+.card h2 {
+  font-size: 21px;
+  margin: 10px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.balance {
+  grid-column: span 2;
+  background: #d8f5e7;
+}
+
+h3 {
+  margin-top: 25px;
+}
+
+form, .panel {
+  background: white;
+  padding: 18px;
+  border-radius: 15px;
+  margin-top: 18px;
+}
+
+label {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 14px;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 13px;
+  border-radius: 9px;
+  border: 1px solid #d6e0da;
+  font-size: 16px;
+}
+
+button {
+  background: #087f5b;
+  color: white;
+  border: none;
+  font-weight: bold;
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+button:active {
+  opacity: .8;
+}
+
+.secondary {
+  background: #e3f3eb;
+  color: #087f5b;
+}
+
+.danger {
+  width: auto;
+  padding: 8px 12px;
+  background: #ffe6e6;
+  color: #b42318;
+  margin: 0;
+}
+
+.entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 13px;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+.entry-info {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.entry small {
+  display: block;
+  color: #68776f;
+  margin-top: 5px;
+}
+
+.amount {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.income {
+  color: #087f5b;
+}
+
+.expense {
+  color: #d93025;
+}
+
+.note {
+  color: #68776f;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+footer {
+  text-align: center;
+  color: #68776f;
+  padding: 25px 10px;
+  font-size: 13px;
+}
+
+@media (max-width: 350px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .balance {
+    grid-column: span 1;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>💰 TakaTrack</h1>
+  <p>আপনার টাকা, আপনার হিসাব</p>
+</header>
+
+<main class="container">
+
+  <section class="cards">
+    <div class="card balance">
+      <small>বর্তমান ব্যালেন্স</small>
+      <h2 id="balance">৳০.০০</h2>
+    </div>
+
+    <div class="card">
+      <small>মোট আয়</small>
+      <h2 id="totalIncome" class="income">৳০</h2>
+    </div>
+
+    <div class="card">
+      <small>মোট খরচ</small>
+      <h2 id="totalExpense" class="expense">৳০</h2>
+    </div>
+  </section>
+
+  <form id="entryForm">
+    <h3 style="margin-top:0">➕ নতুন হিসাব যোগ করুন</h3>
+
+    <label for="type">হিসাবের ধরন</label>
+    <select id="type" required>
+      <option value="income">আয় (Income)</option>
+      <option value="expense">খরচ (Expense)</option>
+    </select>
+
+    <label for="amount">টাকার পরিমাণ (৳)</label>
+    <input id="amount" type="number"
+      min="0.01" step="0.01"
+      placeholder="যেমন: 500" required>
+
+    <label for="category">ক্যাটাগরি</label>
+    <select id="category" required>
+      <option>বেতন</option>
+      <option>ব্যবসা</option>
+      <option>অন্যান্য আয়</option>
+      <option>খাবার</option>
+      <option>যাতায়াত</option>
+      <option>বাসা ভাড়া</option>
+      <option>কেনাকাটা</option>
+      <option>চিকিৎসা</option>
+      <option>পড়াশোনা</option>
+      <option>দান-সদকা</option>
+      <option>অন্যান্য খরচ</option>
+    </select>
+
+    <label for="date">তারিখ</label>
+    <input id="date" type="date" required>
+
+    <label for="note">নোট (ঐচ্ছিক)</label>
+    <input id="note" type="text"
+      maxlength="150" placeholder="কিসের হিসাব?">
+
+    <button type="submit">হিসাব সংরক্ষণ করুন</button>
+  </form>
+
+  <section>
+    <h3>📋 হিসাবের তালিকা</h3>
+
+    <div class="panel">
+      <label for="filter">হিসাব দেখুন</label>
+      <select id="filter">
+        <option value="all">সব হিসাব</option>
+        <option value="income">শুধু আয়</option>
+        <option value="expense">শুধু খরচ</option>
+      </select>
+
+      <label for="monthFilter">মাস অনুযায়ী</label>
+      <input type="month" id="monthFilter">
+    </div>
+
+    <div id="entries"></div>
+  </section>
+
+  <section class="panel">
+    <h3 style="margin-top:0">💾 আপনার ডেটা</h3>
+    <p class="note">
+      হিসাব এই ব্রাউজারের Local Storage-এ রাখা হয়।
+      ব্রাউজারের ডেটা মুছে গেলে হিসাব হারাতে পারেন।
+      তাই নিয়মিত Backup রাখুন।
+    </p>
+
+    <button type="button" id="exportBtn">
+      Backup ডাউনলোড করুন
+    </button>
+
+    <label for="importFile">আগের Backup ফিরিয়ে আনুন</label>
+    <input type="file" id="importFile" accept=".json">
+
+    <button type="button" class="secondary" id="installBtn"
+      hidden>
+      📱 অ্যাপ ইনস্টল করুন
+    </button>
+  </section>
+
+</main>
+
+<footer>
+  TakaTrack © 2026<br>
+  সহজ হিসাব, সুন্দর ভবিষ্যৎ 💚
+</footer>
+
+<script>
+const KEY = "takatrack_entries_v1";
+
+let entries = [];
+
+try {
+  const saved = localStorage.getItem(KEY);
+  entries = saved ? JSON.parse(saved) : [];
+
+  if (!Array.isArray(entries)) entries = [];
+} catch (e) {
+  entries = [];
+}
+
+const $ = id => document.getElementById(id);
+
+function money(value) {
+  return "৳" + Number(value).toLocaleString("en-BD", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  });
+}
+
+function today() {
+  const d = new Date();
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, "0"),
+    String(d.getDate()).padStart(2, "0")
+  ].join("-");
+}
+
+$("date").value = today();
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(entries));
+    return true;
+  } catch (e) {
+    alert("ডেটা সংরক্ষণ করা যায়নি। জায়গা খালি করুন এবং Backup রাখুন।");
+    return false;
+  }
+}
+
+function render() {
+  const income = entries
+    .filter(e => e.type === "income")
+    .reduce((sum, e) => sum + e.amount, 0);
+
+  const expense = entries
+    .filter(e => e.type === "expense")
+    .reduce((sum, e) => sum + e.amount, 0);
+
+  $("totalIncome").textContent = money(income);
+  $("totalExpense").textContent = money(expense);
+  $("balance").textContent = money(income - expense);
+
+  const filter = $("filter").value;
+  const month = $("monthFilter").value;
+
+  const shown = entries
+    .filter(e => filter === "all" || e.type === filter)
+    .filter(e => !month || e.date.startsWith(month))
+    .slice()
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  const list = $("entries");
+  list.replaceChildren();
+
+  if (shown.length === 0) {
+    const p = document.createElement("p");
+    p.className = "note";
+    p.textContent = "এখনো কোনো হিসাব নেই। প্রথম হিসাবটি যোগ করুন!";
+    list.appendChild(p);
+    return;
+  }
+
+  shown.forEach(e => {
+    const row = document.createElement("div");
+    row.className = "entry";
+
+    const info = document.createElement("div");
+    info.className = "entry-info";
+
+    const title = document.createElement("strong");
+    title.textContent = e.category;
+
+    const details = document.createElement("small");
+    details.textContent = e.date + (e.note ? " • " + e.note : "");
+
+    const amount = document.createElement("div");
+    amount.className = "amount " + e.type;
+    amount.textContent =
+      (e.type === "income" ? "+" : "−") + money(e.amount);
+
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "danger";
+    del.textContent = "মুছুন";
+
+    del.addEventListener("click", () => {
+      if (!confirm("এই হিসাবটি মুছে ফেলবেন?")) return;
+
+      const previous = entries;
+      entries = entries.filter(x => x.id !== e.id);
+
+      if (save()) {
+        render();
+      } else {
+        entries = previous;
+      }
+    });
+
+    info.append(title, details);
+    row.append(info);
+
+    const right = document.createElement("div");
+    right.append(amount, del);
+    row.append(right);
+
+    list.appendChild(row);
+  });
+}
+
+$("entryForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const amount = Number($("amount").value);
+  const date = $("date").value;
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    alert("সঠিক টাকার পরিমাণ লিখুন।");
+    return;
+  }
+
+  if (!date) {
+    alert("তারিখ নির্বাচন করুন।");
+    return;
+  }
+
+  const entry = {
+    id: Date.now().toString() + Math.random().toString(36).slice(2),
+    type: $("type").value,
+    amount,
+    category: $("category").value,
+    date,
+    note: $("note").value.trim()
+  };
+
+  entries.push(entry);
+
+  if (save()) {
+    $("amount").value = "";
+    $("note").value = "";
+    render();
+    alert("হিসাব সংরক্ষণ হয়েছে!");
+  } else {
+    entries.pop();
+  }
+});
+
+$("filter").addEventListener("change", render);
+$("monthFilter").addEventListener("change", render);
+
+$("exportBtn").addEventListener("click", () => {
+  const blob = new Blob(
+    [JSON.stringify(entries, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = "takatrack-backup-" + today() + ".json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+});
+
+$("importFile").addEventListener("change", async event => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error("ফাইলটি অনেক বড়।");
+    }
+
+    const data = JSON.parse(await file.text());
+
+    if (!Array.isArray(data) || data.length > 10000) {
+      throw new Error("Backup ফাইল সঠিক নয়।");
+    }
+
+    const valid = data.every(e =>
+      e &&
+      typeof e.id === "string" &&
+      ["income", "expense"].includes(e.type) &&
+      Number.isFinite(e.amount) &&
+      e.amount > 0 &&
+      typeof e.category === "string" &&
+      typeof e.date === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(e.date) &&
+      typeof e.note === "string"
+    );
+
+    if (!valid) throw new Error("Backup-এর তথ্য সঠিক নয়।");
+
+    if (!confirm("বর্তমান হিসাবের বদলে Backup-এর হিসাব বসবে। এগোবেন?")) {
+      return;
+    }
+
+    const old = entries;
+    entries = data;
+
+    if (save()) {
+      render();
+      alert("Backup ফিরিয়ে আনা হয়েছে!");
+    } else {
+      entries = old;
+    }
+  } catch (error) {
+    alert("Backup খোলা যায়নি: " + error.message);
+  } finally {
+    event.target.value = "";
+  }
+});
+
+let installPrompt;
+
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault();
+  installPrompt = event;
+  $("installBtn").hidden = false;
+});
+
+$("installBtn").addEventListener("click", async () => {
+  if (!installPrompt) return;
+
+  installPrompt.prompt();
+  await installPrompt.userChoice;
+  installPrompt = null;
+  $("installBtn").hidden = true;
+});
+
+render();
+</script>
+
+</body>
+</html>
