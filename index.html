@@ -499,6 +499,26 @@ body.dark-theme .category-info {
  <div class="heading"><h2>মাসিক ওভারভিউ</h2><span id="chartMonthLabel">শেষ ৬ মাস</span></div>
  <section class="panel"><div class="row chart-head"><strong>আয় বনাম খরচ</strong><select id="chartPeriod"><option value="6">শেষ ৬ মাস</option><option value="12">শেষ ১২ মাস</option></select></div><div class="legend"><span><i class="dot" style="background:#0a9b6b"></i>আয়</span><span><i class="dot" style="background:#f07878"></i>খরচ</span></div><div class="chart" id="chart"></div><div class="labels" id="chartLabels"></div><p class="hint" id="chartNote">লেনদেন যোগ হলে এখানে চার্ট দেখা যাবে।</p></section>
  <div class="heading">
+  <h2>📅 মাসিক খরচের তুলনা</h2>
+  <span>এই মাস বনাম গত মাস</span>
+</div>
+
+<section class="panel" id="monthlyCompare">
+  <div class="row">
+    <span class="muted">এই মাসে খরচ</span>
+    <strong id="currentMonthExpense">৳০</strong>
+  </div>
+
+  <div class="row" style="margin-top:14px">
+    <span class="muted">গত মাসে খরচ</span>
+    <strong id="previousMonthExpense">৳০</strong>
+  </div>
+
+  <p class="hint" id="expenseComparisonMessage">
+    লেনদেন যোগ হলে তুলনা দেখা যাবে।
+  </p>
+</section>
+ <div class="heading">
   <h2>📊 খরচের ক্যাটাগরি</h2>
   <span>এই মাসের হিসাব</span>
 </div>
@@ -584,6 +604,59 @@ function icon(e){if(e.type==="income")return"↗";if(e.category==="খাবা�
 function makeEntry(e){let row=document.createElement("div");row.className="entry";let left=document.createElement("div");left.className="entry-left";let ic=document.createElement("div");ic.className="entry-icon "+(e.type==="expense"?"red":"");ic.textContent=icon(e);let info=document.createElement("div");info.className="entry-info";let title=document.createElement("strong");title.textContent=e.category;let details=document.createElement("small");details.textContent=e.date+(e.note?" · "+e.note:"");info.append(title,details);left.append(ic,info);let right=document.createElement("div");right.className="entry-right";let amount=document.createElement("div");amount.className="amount "+e.type;amount.textContent=(e.type==="income"?"+":"−")+money(e.amount);let del=document.createElement("button");del.className="danger";del.textContent="মুছুন";del.onclick=async()=>{if(!confirm("এই হিসাবটি মুছে ফেলবেন?"))return;try{if(currentUser)await deleteDoc(doc(db,"users",currentUser.uid,"transactions",e.id));else{entries=entries.filter(x=>x.id!==e.id);localStorage.setItem(KEY,JSON.stringify(entries));localEntries=[...entries]}entries=entries.filter(x=>x.id!==e.id);render()}catch(err){alert("হিসাব মুছতে সমস্যা হয়েছে: "+friendlyError(err))}};right.append(amount,del);row.append(left,right);return row}
 function totals(a){return{income:a.filter(e=>e.type==="income").reduce((s,e)=>s+Number(e.amount),0),expense:a.filter(e=>e.type==="expense").reduce((s,e)=>s+Number(e.amount),0)}}
 function renderChart(){let n=Number($("chartPeriod").value)||6,ms=[],now=new Date();for(let i=n-1;i>=0;i--){let d=new Date(now.getFullYear(),now.getMonth()-i,1);ms.push({key:d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"),label:d.toLocaleDateString("bn-BD",{month:"short"}),income:0,expense:0})}entries.forEach(e=>{let m=ms.find(x=>x.key===e.date.slice(0,7));if(m)m[e.type]+=Number(e.amount)});let max=Math.max(1,...ms.flatMap(m=>[m.income,m.expense]));$("chart").replaceChildren();$("chartLabels").replaceChildren();ms.forEach(m=>{let col=document.createElement("div");col.className="month";["income","expense"].forEach(t=>{let b=document.createElement("div");b.className="bar "+(t==="income"?"in":"out");b.style.height=Math.max(3,m[t]/max*100)+"%";b.title=(t==="income"?"আয়: ":"খরচ: ")+money(m[t]);col.append(b)});$("chart").append(col);let l=document.createElement("span");l.textContent=m.label;$("chartLabels").append(l)});$("chartMonthLabel").textContent=n===6?"শেষ ৬ মাস":"শেষ ১২ মাস";$("chartNote").textContent=entries.length?"আপনার লেনদেন অনুযায়ী মাসভিত্তিক আয় ও খরচ।":"লেনদেন যোগ হলে এখানে চার্ট দেখা যাবে।"}
+function renderMonthlyCompare() {
+  const now = new Date();
+
+  const currentKey =
+    now.getFullYear() + "-" +
+    String(now.getMonth() + 1).padStart(2, "0");
+
+  const previousDate = new Date(
+    now.getFullYear(),
+    now.getMonth() - 1,
+    1
+  );
+
+  const previousKey =
+    previousDate.getFullYear() + "-" +
+    String(previousDate.getMonth() + 1).padStart(2, "0");
+
+  const currentExpense = entries
+    .filter(e =>
+      e.type === "expense" &&
+      e.date.startsWith(currentKey)
+    )
+    .reduce((sum, e) => sum + Number(e.amount), 0);
+
+  const previousExpense = entries
+    .filter(e =>
+      e.type === "expense" &&
+      e.date.startsWith(previousKey)
+    )
+    .reduce((sum, e) => sum + Number(e.amount), 0);
+
+  $("currentMonthExpense").textContent = money(currentExpense);
+  $("previousMonthExpense").textContent = money(previousExpense);
+
+  let message;
+
+  if (previousExpense === 0 && currentExpense === 0) {
+    message = "এই দুই মাসে এখনো কোনো খরচের হিসাব নেই।";
+  } else if (previousExpense === 0) {
+    message = "গত মাসে খরচ ছিল না। এই মাসের খরচ " +
+      money(currentExpense) + "।";
+  } else if (currentExpense > previousExpense) {
+    message = "⚠️ গত মাসের তুলনায় খরচ বেড়েছে " +
+      money(currentExpense - previousExpense) + "।";
+  } else if (currentExpense < previousExpense) {
+    message = "💚 গত মাসের তুলনায় খরচ কমেছে " +
+      money(previousExpense - currentExpense) + "।";
+  } else {
+    message = "গত মাস ও এই মাসের খরচ সমান।";
+  }
+
+  $("expenseComparisonMessage").textContent = message;
+}
 function renderCategoryChart() {
   const month = currentMonth();
 
