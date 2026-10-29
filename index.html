@@ -199,17 +199,15 @@ function render(){let t=totals(entries);$("totalIncome").textContent=money(t.inc
     updatedAt: new Date().toISOString()
   });
 
-  saveLocalBudget(amount);
+    saveLocalBudget(amount);
   $("budgetInput").value = "";
   render();
   alert("মাসিক বাজেট Firebase-এ সংরক্ষণ হয়েছে!");
 
 } catch (error) {
-  console.error(error);
+  console.error("Budget save error:", error);
   alert("বাজেট সংরক্ষণ করা যায়নি। আবার চেষ্টা করো।");
-} {
-    alert("বাজেট সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।");
-  }
+}
 };
 $("toggleBalance").onclick=()=>{showBalance=!showBalance;$("toggleBalance").textContent=showBalance?"◉":"◎";render()};$("chartPeriod").onchange=renderChart;$("filter").onchange=render;$("monthFilter").onchange=render;
 $("entryForm").onsubmit=async ev=>{ev.preventDefault();let amount=Number($("amount").value),date=$("date").value;if(!Number.isFinite(amount)||amount<=0||!date){alert("সঠিক টাকার পরিমাণ ও তারিখ দিন।");return}let e={type:$("type").value,amount,category:$("category").value,date,note:$("note").value.trim()},btn=$("saveEntryBtn");btn.disabled=true;try{if(currentUser)entries.push(await saveEntryToCloud(e));else{e.id=Date.now().toString()+Math.random().toString(36).slice(2);entries.push(e);try{localStorage.setItem(KEY,JSON.stringify(entries));localEntries=[...entries]}catch{entries.pop();throw Error("ডেটা সংরক্ষণ করা যায়নি। Backup রাখুন।")}}$("amount").value="";$("note").value="";render();alert(currentUser?"হিসাব অনলাইনে সংরক্ষণ হয়েছে!":"হিসাব এই ব্রাউজারে সংরক্ষণ হয়েছে। অনলাইনে রাখতে লগইন করুন।");closeForm()}catch(err){alert("হিসাব সংরক্ষণ হয়নি: "+friendlyError(err))}finally{btn.disabled=false}};
