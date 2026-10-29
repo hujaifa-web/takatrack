@@ -402,6 +402,46 @@ background: #24342a;
 color: #f1f7f3;
 border-color: #b99b4b;
 }
+ /* Premium Category Breakdown */
+#categoryBreakdown {
+  border: 1px solid #e5d7a6;
+  border-radius: 20px;
+}
+
+.category-item {
+  margin: 15px 0;
+}
+
+.category-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 650;
+  margin-bottom: 7px;
+}
+
+.category-track {
+  height: 10px;
+  background: #e7eee9;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.category-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #42d99b, #087f5b);
+  transition: width .4s ease;
+}
+
+body.dark-theme .category-track {
+  background: #34463a;
+}
+
+body.dark-theme .category-info {
+  color: #f1f7f3;
+}
 </style>
 </head>
 <body>
@@ -449,6 +489,16 @@ border-color: #b99b4b;
 </section>
  <div class="heading"><h2>মাসিক ওভারভিউ</h2><span id="chartMonthLabel">শেষ ৬ মাস</span></div>
  <section class="panel"><div class="row chart-head"><strong>আয় বনাম খরচ</strong><select id="chartPeriod"><option value="6">শেষ ৬ মাস</option><option value="12">শেষ ১২ মাস</option></select></div><div class="legend"><span><i class="dot" style="background:#0a9b6b"></i>আয়</span><span><i class="dot" style="background:#f07878"></i>খরচ</span></div><div class="chart" id="chart"></div><div class="labels" id="chartLabels"></div><p class="hint" id="chartNote">লেনদেন যোগ হলে এখানে চার্ট দেখা যাবে।</p></section>
+ <div class="heading">
+  <h2>📊 খরচের ক্যাটাগরি</h2>
+  <span>এই মাসের হিসাব</span>
+</div>
+
+<section class="panel" id="categoryBreakdown">
+  <div id="categoryChart">
+    <p class="hint">লেনদেন যোগ হলে এখানে খরচের বিবরণ দেখা যাবে।</p>
+  </div>
+</section>
  <div class="heading"><h2>সাম্প্রতিক লেনদেন</h2><button id="seeAllBtn" style="width:auto;margin:0;padding:0;background:transparent;color:var(--g);border:0;font-size:12px">সব দেখুন →</button></div><div class="entries" id="recentEntries"></div>
 </section>
 <section class="section" id="transactionsPage" hidden><div class="heading"><h2>📋 সব লেনদেন</h2><span id="transactionCount">০টি</span></div><div class="panel"><div class="filter-grid"><div><label for="filter">ধরন</label><select id="filter"><option value="all">সব হিসাব</option><option value="income">শুধু আয়</option><option value="expense">শুধু খরচ</option></select></div><div><label for="monthFilter">মাস</label><input id="monthFilter" type="month"></div></div></div><div class="entries" id="entries" style="margin-top:12px"></div></section>
@@ -525,7 +575,62 @@ function icon(e){if(e.type==="income")return"↗";if(e.category==="খাবা�
 function makeEntry(e){let row=document.createElement("div");row.className="entry";let left=document.createElement("div");left.className="entry-left";let ic=document.createElement("div");ic.className="entry-icon "+(e.type==="expense"?"red":"");ic.textContent=icon(e);let info=document.createElement("div");info.className="entry-info";let title=document.createElement("strong");title.textContent=e.category;let details=document.createElement("small");details.textContent=e.date+(e.note?" · "+e.note:"");info.append(title,details);left.append(ic,info);let right=document.createElement("div");right.className="entry-right";let amount=document.createElement("div");amount.className="amount "+e.type;amount.textContent=(e.type==="income"?"+":"−")+money(e.amount);let del=document.createElement("button");del.className="danger";del.textContent="মুছুন";del.onclick=async()=>{if(!confirm("এই হিসাবটি মুছে ফেলবেন?"))return;try{if(currentUser)await deleteDoc(doc(db,"users",currentUser.uid,"transactions",e.id));else{entries=entries.filter(x=>x.id!==e.id);localStorage.setItem(KEY,JSON.stringify(entries));localEntries=[...entries]}entries=entries.filter(x=>x.id!==e.id);render()}catch(err){alert("হিসাব মুছতে সমস্যা হয়েছে: "+friendlyError(err))}};right.append(amount,del);row.append(left,right);return row}
 function totals(a){return{income:a.filter(e=>e.type==="income").reduce((s,e)=>s+Number(e.amount),0),expense:a.filter(e=>e.type==="expense").reduce((s,e)=>s+Number(e.amount),0)}}
 function renderChart(){let n=Number($("chartPeriod").value)||6,ms=[],now=new Date();for(let i=n-1;i>=0;i--){let d=new Date(now.getFullYear(),now.getMonth()-i,1);ms.push({key:d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"),label:d.toLocaleDateString("bn-BD",{month:"short"}),income:0,expense:0})}entries.forEach(e=>{let m=ms.find(x=>x.key===e.date.slice(0,7));if(m)m[e.type]+=Number(e.amount)});let max=Math.max(1,...ms.flatMap(m=>[m.income,m.expense]));$("chart").replaceChildren();$("chartLabels").replaceChildren();ms.forEach(m=>{let col=document.createElement("div");col.className="month";["income","expense"].forEach(t=>{let b=document.createElement("div");b.className="bar "+(t==="income"?"in":"out");b.style.height=Math.max(3,m[t]/max*100)+"%";b.title=(t==="income"?"আয়: ":"খরচ: ")+money(m[t]);col.append(b)});$("chart").append(col);let l=document.createElement("span");l.textContent=m.label;$("chartLabels").append(l)});$("chartMonthLabel").textContent=n===6?"শেষ ৬ মাস":"শেষ ১২ মাস";$("chartNote").textContent=entries.length?"আপনার লেনদেন অনুযায়ী মাসভিত্তিক আয় ও খরচ।":"লেনদেন যোগ হলে এখানে চার্ট দেখা যাবে।"}
-function renderBudget() {
+function renderCategoryChart() {
+  const month = currentMonth();
+
+  const expenses = entries.filter(e =>
+    e.type === "expense" && e.date.startsWith(month)
+  );
+
+  const totals = {};
+
+  expenses.forEach(e => {
+    totals[e.category] = (totals[e.category] || 0) + Number(e.amount);
+  });
+
+  const categories = Object.entries(totals)
+    .sort((a, b) => b[1] - a[1]);
+
+  const container = $("categoryChart");
+  container.replaceChildren();
+
+  if (!categories.length) {
+    const p = document.createElement("p");
+    p.className = "hint";
+    p.textContent = "এই মাসে এখনো কোনো খরচ নেই।";
+    container.append(p);
+    return;
+  }
+
+  const max = categories[0][1];
+
+  categories.forEach(([name, amount]) => {
+    const item = document.createElement("div");
+    item.className = "category-item";
+
+    const info = document.createElement("div");
+    info.className = "category-info";
+
+    const title = document.createElement("span");
+    title.textContent = name;
+
+    const value = document.createElement("strong");
+    value.textContent = money(amount);
+
+    info.append(title, value);
+
+    const track = document.createElement("div");
+    track.className = "category-track";
+
+    const fill = document.createElement("div");
+    fill.className = "category-fill";
+    fill.style.width = (amount / max * 100) + "%";
+
+    track.append(fill);
+    item.append(info, track);
+    container.append(renderCrender });
+}
+ function renderBudget() {
   const budget = readBudget();
   const month = currentMonth();
 
@@ -555,7 +660,7 @@ function renderBudget() {
     percent >= 80 ? "⚠️ সতর্ক থাকো! বাজেটের বেশিরভাগ খরচ হয়ে গেছে।" :
     "💚 বাজেটের মধ্যে আছো। আরও বাকি " + money(remaining) + "।";
 }
-function render(){let t=totals(entries);$("totalIncome").textContent=money(t.income);$("totalExpense").textContent=money(t.expense);$("balance").textContent=showBalance?money(t.income-t.expense):"৳ ••••••";$("reportIncome").textContent=money(t.income);$("reportExpense").textContent=money(t.expense);$("reportBalance").textContent=money(t.income-t.expense);let mt=totals(entries.filter(e=>e.date.startsWith(today().slice(0,7))));$("thisMonthSummary").textContent="এই মাসে আয় "+money(mt.income)+" · খরচ "+money(mt.expense)+" · অবশিষ্ট "+money(mt.income-mt.expense);let f=$("filter").value,m=$("monthFilter").value,sorted=entries.slice().sort((a,b)=>b.date.localeCompare(a.date)),shown=sorted.filter(e=>(f==="all"||e.type===f)&&(!m||e.date.startsWith(m)));$("entries").replaceChildren();$("transactionCount").textContent=shown.length.toLocaleString("bn-BD")+"টি";if(!shown.length){let p=document.createElement("div");p.className="empty";p.textContent="এখনো কোনো হিসাব নেই।";$("entries").append(p)}else shown.forEach(e=>$("entries").append(makeEntry(e)));$("recentEntries").replaceChildren();let recent=sorted.slice(0,5);if(!recent.length){let p=document.createElement("div");p.className="panel empty";p.textContent="স্বাগতম! প্রথম আয় বা খরচ যোগ করলে এখানে দেখা যাবে।";$("recentEntries").append(p)}else recent.forEach(e=>$("recentEntries").append(makeEntry(e)));renderBudget();renderChart()}
+function render(){let t=totals(entries);$("totalIncome").textContent=money(t.income);$("totalExpense").textContent=money(t.expense);$("balance").textContent=showBalance?money(t.income-t.expense):"৳ ••••••";$("reportIncome").textContent=money(t.income);$("reportExpense").textContent=money(t.expense);$("reportBalance").textContent=money(t.income-t.expense);let mt=totals(entries.filter(e=>e.date.startsWith(today().slice(0,7))));$("thisMonthSummary").textContent="এই মাসে আয় "+money(mt.income)+" · খরচ "+money(mt.expense)+" · অবশিষ্ট "+money(mt.income-mt.expense);let f=$("filter").value,m=$("monthFilter").value,sorted=entries.slice().sort((a,b)=>b.date.localeCompare(a.date)),shown=sorted.filter(e=>(f==="all"||e.type===f)&&(!m||e.date.startsWith(m)));$("entries").replaceChildren();$("transactionCount").textContent=shown.length.toLocaleString("bn-BD")+"টি";if(!shown.length){let p=document.createElement("div");p.className="empty";p.textContent="এখনো কোনো হিসাব নেই।";$("entries").append(p)}else shown.forEach(e=>$("entries").append(makeEntry(e)));$("recentEntries").replaceChildren();let recent=sorted.slice(0,5);if(!recent.length){let p=document.createElement("div");p.className="panel empty";p.textContent="স্বাগতম! প্রথম আয় বা খরচ যোগ করলে এখানে দেখা যাবে।";$("recentEntries").append(p)}else recent.forEach(e=>$("recentEntries").append(makeEntry(e)));renderBudget();renderBudget();renderChart();renderCategoryChart()}
  $("saveBudgetBtn").onclick = async () => {
   const amount = Number($("budgetInput").value);
 
