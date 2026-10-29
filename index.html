@@ -17,6 +17,52 @@ main{max-width:760px;margin:-66px auto 0;padding:0 15px}.balance{padding:22px;ba
 .entries{display:grid;gap:9px}.entry{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:1px solid #edf1ee;border-radius:16px;padding:12px}.entry-left{display:flex;align-items:center;gap:10px;min-width:0}.entry-icon{width:40px;height:40px;flex:0 0 40px;border-radius:13px;background:#e2f7eb;display:grid;place-items:center}.entry-icon.red{background:#ffeded}.entry-info{min-width:0;overflow-wrap:anywhere}.entry-info strong{font-size:13px}.entry-info small{display:block;font-size:11px;color:var(--mut);margin-top:4px}.entry-right{text-align:right;flex-shrink:0}.amount{font-size:13px;font-weight:850;margin-bottom:5px}.danger{border:0;background:#fff0f0;color:#b42318;padding:5px 8px;border-radius:8px;font-size:11px}
 label{display:block;font-size:13px;font-weight:650;margin:12px 0 6px}input,select{width:100%;padding:12px 13px;border:1px solid #dce5df;border-radius:12px;background:#fbfdfb;color:var(--ink)}button.primary,button.secondary{width:100%;border:0;border-radius:12px;background:var(--g);color:#fff;padding:13px;font-weight:800;margin-top:13px}.secondary{background:#e5f6ed!important;color:var(--gd)!important}.auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.auth-grid button{margin-top:12px}.auth-grid button:disabled,button:disabled{opacity:.55}.filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.section[hidden],#entryPanel[hidden]{display:none!important}.empty{text-align:center;color:var(--mut);padding:22px 8px;font-size:13px}.nav{position:fixed;z-index:10;bottom:0;left:0;right:0;max-width:760px;margin:auto;background:#ffffffed;backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr)}.nav button{border:0;background:transparent;color:#839087;padding:5px 2px;margin:0;font-size:10px;font-weight:750;display:flex;flex-direction:column;align-items:center;gap:4px}.nav .ni{font-size:20px}.nav button.active{color:var(--g)}.nav button.active .ni{background:#e2f5e9;border-radius:10px;padding:3px 12px}footer{text-align:center;color:#8a9890;font-size:11px;padding:22px 8px}
 @media(min-width:620px){main{padding:0 22px}.card{padding:20px}.balance{padding:26px}}@media(max-width:360px){main{padding:0 10px}.card{padding:12px}.balance{padding:18px}.quick{gap:6px}.filter-grid{grid-template-columns:1fr}}
+ /* Premium Emerald Luxe */
+header {
+  background: radial-gradient(circle at top right, #d4af37 0, transparent 28%),
+    linear-gradient(135deg, #052e24, #087f5b 58%, #0b7658);
+}
+
+.logo {
+  background: linear-gradient(135deg, #d8b86a, #f8e7a1);
+  color: #17372b;
+  box-shadow: 0 8px 22px #0002;
+}
+
+.balance {
+  background: linear-gradient(135deg, #103d30, #07563e 60%, #0a6b4d);
+  color: #fff;
+  border: 1px solid #c9a85c;
+  box-shadow: 0 18px 42px #073c2c30;
+}
+
+.balance .muted {
+  color: #d5e9df;
+}
+
+.balance .pill {
+  background: #d8bd70;
+  color: #16392b;
+}
+
+.card,
+.panel,
+.entry {
+  border: 1px solid #e5d7a6;
+  box-shadow: 0 12px 30px #123d2b10;
+}
+
+.quick button {
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.quick button:active {
+  transform: scale(.98);
+}
+
+.nav {
+  box-shadow: 0 -8px 28px #102f2210;
+}
 </style>
 </head>
 <body>
