@@ -248,6 +248,41 @@ color: #4ade80 !important;
 fill: #4ade80 !important;
 opacity: 1 !important;
 }
+ /* Premium Balance Card Upgrade */
+.balance {
+position: relative;
+overflow: hidden;
+padding: 24px;
+border-radius: 24px;
+background: linear-gradient(135deg, #103d30, #07563e 60%, #0a6b4d);
+border: 1px solid #d8bd70;
+box-shadow: 0 16px 36px #073c2c25;
+}
+
+.balance .big {
+font-size: clamp(30px, 8vw, 40px);
+font-weight: 800;
+letter-spacing: .4px;
+line-height: 1.4;
+margin: 12px 0 18px;
+}
+
+.balance .row {
+align-items: center;
+gap: 12px;
+}
+
+.balance .pill {
+border-radius: 999px;
+padding: 7px 12px;
+font-weight: 700;
+}
+
+body.dark-theme .balance {
+background: linear-gradient(135deg, #102c22, #06452f 65%, #07553c);
+border-color: #d8bd70;
+box-shadow: 0 16px 36px #0004;
+}
 </style>
 </head>
 <body>
