@@ -283,6 +283,65 @@ background: linear-gradient(135deg, #102c22, #06452f 65%, #07553c);
 border-color: #d8bd70;
 box-shadow: 0 16px 36px #0004;
 }
+ /* Premium Income & Expense Cards */
+.grid {
+gap: 14px;
+}
+
+.grid .card {
+position: relative;
+overflow: hidden;
+padding: 20px 16px;
+border-radius: 20px;
+background: linear-gradient(145deg, #ffffff, #f2f8f4);
+border: 1px solid #e5d7a6;
+box-shadow: 0 8px 22px #123d2b0d;
+transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.grid .card .ico {
+width: 42px;
+height: 42px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 14px;
+background: #dff5e8;
+font-size: 23px;
+margin-bottom: 12px;
+}
+
+.grid .card .ico.red {
+background: #fde8e8;
+}
+
+.grid .card .label {
+font-size: 13px;
+margin-bottom: 6px;
+}
+
+.grid .card .val {
+font-size: clamp(18px, 5vw, 24px);
+font-weight: 800;
+overflow-wrap: anywhere;
+}
+
+body.dark-theme .grid .card {
+background: linear-gradient(145deg, #1b2720, #24342a);
+border-color: #b99b4b;
+}
+
+body.dark-theme .grid .card .label {
+color: #b2c0b7;
+}
+
+body.dark-theme .grid .card .val.income {
+color: #4ade80;
+}
+
+body.dark-theme .grid .card .val.expense {
+color: #ff8585;
+}
 </style>
 </head>
 <body>
