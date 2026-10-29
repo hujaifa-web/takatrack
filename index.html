@@ -442,6 +442,15 @@ body.dark-theme .category-track {
 body.dark-theme .category-info {
   color: #f1f7f3;
 }
+ .category-percent {
+  font-size: 13px;
+  font-weight: 700;
+  color: #059669;
+  background: #d1fae5;
+  padding: 4px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
 </style>
 </head>
 <body>
@@ -603,7 +612,10 @@ function renderCategoryChart() {
   }
 
   const max = categories[0][1];
-
+  const totalExpense = expenses.reduce(
+  (sum, e) => sum + Number(e.amount),
+  0
+);
   categories.forEach(([name, amount]) => {
     const item = document.createElement("div");
     item.className = "category-item";
@@ -616,8 +628,11 @@ function renderCategoryChart() {
 
     const value = document.createElement("strong");
     value.textContent = money(amount);
-
-    info.append(title, value);
+    const percent = document.createElement("span");
+    percent.textContent =
+  ((amount / totalExpense) * 100).toFixed(1) + "%";
+percent.className = "category-percent";
+    info.append(title, value, percent);
 
     const track = document.createElement("div");
     track.className = "category-track";
