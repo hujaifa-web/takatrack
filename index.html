@@ -342,6 +342,66 @@ color: #4ade80;
 body.dark-theme .grid .card .val.expense {
 color: #ff8585;
 }
+ /* Premium Monthly Finance Chart */
+.chart {
+height: 165px;
+gap: 10px;
+padding: 12px 4px 0;
+border-bottom: 1px solid #d8c58b;
+}
+
+.month {
+gap: 5px;
+max-width: 55px;
+}
+
+.bar {
+width: 14px;
+min-height: 4px;
+border-radius: 8px 8px 3px 3px;
+transition: height .35s ease;
+}
+
+.bar.in {
+background: linear-gradient(180deg, #42d99b, #087f5b);
+box-shadow: 0 3px 8px #087f5b20;
+}
+
+.bar.out {
+background: linear-gradient(180deg, #ffaaaa, #d94b4b);
+box-shadow: 0 3px 8px #d94b4b18;
+}
+
+.labels {
+font-size: 11px;
+font-weight: 600;
+margin-top: 10px;
+}
+
+.chart-head strong {
+font-size: 15px;
+}
+
+.chart-head select {
+border-radius: 12px;
+border-color: #d8c58b;
+}
+
+body.dark-theme .chart {
+border-bottom-color: #b99b4b;
+}
+
+body.dark-theme .labels,
+body.dark-theme .legend,
+body.dark-theme .hint {
+color: #b2c0b7;
+}
+
+body.dark-theme .chart-head select {
+background: #24342a;
+color: #f1f7f3;
+border-color: #b99b4b;
+}
 </style>
 </head>
 <body>
@@ -588,4 +648,3 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 </body></html>
-x
