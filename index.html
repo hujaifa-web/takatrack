@@ -451,6 +451,84 @@ body.dark-theme .category-info {
   border-radius: 8px;
   white-space: nowrap;
 }
+ /* TakaTrack — Dashboard Design Upgrade */
+.card,
+.panel,
+.balance,
+#monthlyCompare,
+#categoryBreakdown {
+  border-radius: 22px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.card,
+.panel,
+.entry {
+  box-shadow: 0 10px 28px rgba(6, 78, 59, 0.07);
+}
+
+.heading {
+  margin-top: 28px;
+  margin-bottom: 14px;
+}
+
+.heading h2 {
+  letter-spacing: -0.3px;
+}
+
+.quick button {
+  min-height: 100px;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #ffffff, #f3faf5);
+}
+
+.quick b {
+  box-shadow: 0 4px 12px rgba(8, 127, 91, 0.10);
+}
+
+.panel {
+  padding: 19px;
+}
+
+body.dark-theme .quick button {
+  background: linear-gradient(145deg, #1b2720, #24342a);
+  color: #f1f7f3;
+  border-color: #b99b4b;
+}
+
+body.dark-theme .card,
+body.dark-theme .panel,
+body.dark-theme .entry {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+@media (hover: hover) {
+  .card:hover,
+  .entry:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 360px) {
+  .panel {
+    padding: 14px;
+  }
+
+  .quick button {
+    min-height: 92px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .panel,
+  .balance,
+  .entry,
+  .quick button {
+    transition: none !important;
+  }
+}
 </style>
 </head>
 <body>
