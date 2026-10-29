@@ -106,7 +106,26 @@ function today(){let d=new Date();return[d.getFullYear(),String(d.getMonth()+1).
 $("date").value=today();function setStatus(t){$("authStatus").textContent=t}
 function friendlyError(e){let c=e?.code||"";if(c.includes("permission-denied"))return"Firestore Rules বা লগইন অনুমতি যাচাই করুন।";if(c.includes("unavailable"))return"ইন্টারনেট সংযোগ পরীক্ষা করুন।";if(c.includes("email-already-in-use"))return"এই ইমেইলে আগে থেকেই অ্যাকাউন্ট আছে। লগইন করুন।";if(c.includes("invalid-email"))return"সঠিক ইমেইল লিখুন।";if(c.includes("weak-password"))return"কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন।";if(c.includes("invalid-credential")||c.includes("wrong-password")||c.includes("user-not-found"))return"ইমেইল বা পাসওয়ার্ড সঠিক নয়।";return e?.message||"একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।"}
 async function getCloudEntries(){let s=await getDocs(collection(db,"users",currentUser.uid,"transactions"));return s.docs.map(d=>({...d.data(),id:d.id}))}
-async function refreshCloud(){if(!currentUser)return;$("saveEntryBtn").disabled=true;try{entries=await getCloudEntries();render();setStatus("লগইন আছে: "+currentUser.email+" — হিসাব অনলাইনে সংরক্ষিত হচ্ছে।");$("migrateBtn").hidden=!localEntries.length}catch(e){setStatus("ক্লাউড হিসাব লোড হয়নি: "+friendlyError(e))}finally{$("saveEntryBtn").disabled=false}}
+async function loadCloudBudget() {
+  if (!currentUser) return;
+
+  const budgetRef = doc(
+    db,
+    "users",
+    currentUser.uid,
+    "budgets",
+    currentMonth()
+  );
+
+  const budgetSnap = await getDoc(budgetRef);
+
+  if (budgetSnap.exists()) {
+    const amount = Number(budgetSnap.data().amount || 0);
+    saveLocalBudget(amount);
+    $("budgetInput").value = "";
+  }
+}
+async function refreshCloud(){if(!currentUser)return;$("saveEntryBtn").disabled=true;try{entries=await getCloudEntries();await loadCloudBudget();renderBudget();render();setStatus("লগইন আছে: "+currentUser.email+" — হিসাব অনলাইনে সংরক্ষিত হচ্ছে।");$("migrateBtn").hidden=!localEntries.length}catch(e){setStatus("ক্লাউড হিসাব লোড হয়নি: "+friendlyError(e))}finally{$("saveEntryBtn").disabled=false}}
 async function saveEntryToCloud(e){if(!currentUser)throw Error("অনলাইনে সংরক্ষণ করতে আগে লগইন করুন।");let d={type:e.type,amount:Number(e.amount),category:e.category,date:e.date,note:e.note||""},r=await addDoc(collection(db,"users",currentUser.uid,"transactions"),d);return{...d,id:r.id}}
 function setPage(id){document.querySelectorAll(".section").forEach(s=>s.hidden=s.id!==id);$("entryPanel").hidden=true;document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));window.scrollTo({top:0,behavior:"smooth"})}
 function openForm(type){$("type").value=type||"income";$("formHeading").textContent=type==="expense"?"➖ নতুন খরচ যোগ করুন":"➕ নতুন আয় যোগ করুন";document.querySelectorAll(".section").forEach(s=>s.hidden=true);$("entryPanel").hidden=false;document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));window.scrollTo({top:0,behavior:"smooth"})}
@@ -152,7 +171,7 @@ function renderBudget() {
     "💚 বাজেটের মধ্যে আছো। আরও বাকি " + money(remaining) + "।";
 }
 function render(){let t=totals(entries);$("totalIncome").textContent=money(t.income);$("totalExpense").textContent=money(t.expense);$("balance").textContent=showBalance?money(t.income-t.expense):"৳ ••••••";$("reportIncome").textContent=money(t.income);$("reportExpense").textContent=money(t.expense);$("reportBalance").textContent=money(t.income-t.expense);let mt=totals(entries.filter(e=>e.date.startsWith(today().slice(0,7))));$("thisMonthSummary").textContent="এই মাসে আয় "+money(mt.income)+" · খরচ "+money(mt.expense)+" · অবশিষ্ট "+money(mt.income-mt.expense);let f=$("filter").value,m=$("monthFilter").value,sorted=entries.slice().sort((a,b)=>b.date.localeCompare(a.date)),shown=sorted.filter(e=>(f==="all"||e.type===f)&&(!m||e.date.startsWith(m)));$("entries").replaceChildren();$("transactionCount").textContent=shown.length.toLocaleString("bn-BD")+"টি";if(!shown.length){let p=document.createElement("div");p.className="empty";p.textContent="এখনো কোনো হিসাব নেই।";$("entries").append(p)}else shown.forEach(e=>$("entries").append(makeEntry(e)));$("recentEntries").replaceChildren();let recent=sorted.slice(0,5);if(!recent.length){let p=document.createElement("div");p.className="panel empty";p.textContent="স্বাগতম! প্রথম আয় বা খরচ যোগ করলে এখানে দেখা যাবে।";$("recentEntries").append(p)}else recent.forEach(e=>$("recentEntries").append(makeEntry(e)));renderBudget();renderChart()}
-$("saveBudgetBtn").onclick = () => {
+ $("saveBudgetBtn").onclick = async () => {
   const amount = Number($("budgetInput").value);
 
   if (!Number.isFinite(amount) || amount <= 0) {
@@ -161,11 +180,34 @@ $("saveBudgetBtn").onclick = () => {
   }
 
   try {
-    saveLocalBudget(amount);
-    $("budgetInput").value = "";
-    render();
-    alert("মাসিক বাজেট সংরক্ষণ হয়েছে!");
-  } catch (error) {
+  if (!currentUser) {
+    alert("প্রথমে লগইন করো।");
+    return;
+  }
+
+  const budgetRef = doc(
+    db,
+    "users",
+    currentUser.uid,
+    "budgets",
+    currentMonth()
+  );
+
+  await setDoc(budgetRef, {
+    amount: amount,
+    month: currentMonth(),
+    updatedAt: new Date().toISOString()
+  });
+
+  saveLocalBudget(amount);
+  $("budgetInput").value = "";
+  render();
+  alert("মাসিক বাজেট Firebase-এ সংরক্ষণ হয়েছে!");
+
+} catch (error) {
+  console.error(error);
+  alert("বাজেট সংরক্ষণ করা যায়নি। আবার চেষ্টা করো।");
+} {
     alert("বাজেট সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।");
   }
 };
