@@ -97,6 +97,48 @@ box-shadow: 0 5px 15px #123d2b08;
 transform: scale(.96);
 box-shadow: 0 3px 10px #123d2b15;
 }
+ /* Premium Transaction Cards */
+.entry {
+border: 1px solid #e5d7a6;
+border-radius: 18px;
+padding: 14px;
+background: linear-gradient(135deg, #ffffff, #f8fbf8);
+box-shadow: 0 6px 18px #123d2b0a;
+transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.entry:active {
+transform: scale(.99);
+box-shadow: 0 3px 10px #123d2b12;
+}
+
+.entry-icon {
+border: 1px solid #d8ebdf;
+box-shadow: 0 3px 9px #087f5b10;
+}
+
+.entry-icon.red {
+border-color: #f5d5d5;
+}
+
+.entry-info strong {
+color: #17372b;
+font-size: 14px;
+}
+
+.amount.income {
+color: #087f5b;
+}
+
+.amount.expense {
+color: #d94b4b;
+}
+
+.danger {
+border: 1px solid #f1d1d1;
+border-radius: 10px;
+transition: background .2s ease;
+}
 </style>
 </head>
 <body>
