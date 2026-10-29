@@ -74,4 +74,13 @@ $("migrateBtn").onclick=async()=>{if(!currentUser)return;if(!localEntries.length
 let installPrompt;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPrompt=e;$("installBtn").hidden=false});$("installBtn").onclick=async()=>{if(!installPrompt){alert("Chrome-এর মেনু (⋮) থেকে 'Add to Home screen' বা 'Install app' নির্বাচন করুন।");return}installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$("installBtn").hidden=true};
 render();
 </script>
+ <script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(() => console.log("TakaTrack ready"))
+      .catch((error) => console.error("Service Worker error:", error));
+  });
+}
+</script>
 </body></html>
