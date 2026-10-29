@@ -5,541 +5,344 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#087f5b">
 <title>TakaTrack - হিসাব রাখুন সহজে</title>
-
 <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f1f5f3;
-  color: #172b24;
-}
-
-header {
-  background: #087f5b;
-  color: white;
-  padding: 25px 18px;
-  border-radius: 0 0 24px 24px;
-}
-
-header h1 {
-  margin: 0 0 6px;
-  font-size: 27px;
-}
-
-header p {
-  margin: 0;
-  opacity: .9;
-}
-
-.container {
-  max-width: 600px;
-  margin: auto;
-  padding: 16px;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 18px;
-}
-
-.card {
-  background: white;
-  padding: 17px;
-  border-radius: 15px;
-  box-shadow: 0 3px 12px #00000008;
-}
-
-.card small {
-  color: #68776f;
-}
-
-.card h2 {
-  font-size: 21px;
-  margin: 10px 0 0;
-  overflow-wrap: anywhere;
-}
-
-.balance {
-  grid-column: span 2;
-  background: #d8f5e7;
-}
-
-h3 {
-  margin-top: 25px;
-}
-
-form, .panel {
-  background: white;
-  padding: 18px;
-  border-radius: 15px;
-  margin-top: 18px;
-}
-
-label {
-  display: block;
-  margin: 12px 0 6px;
-  font-size: 14px;
-}
-
-input, select, button {
-  width: 100%;
-  padding: 13px;
-  border-radius: 9px;
-  border: 1px solid #d6e0da;
-  font-size: 16px;
-}
-
-button {
-  background: #087f5b;
-  color: white;
-  border: none;
-  font-weight: bold;
-  margin-top: 15px;
-  cursor: pointer;
-}
-
-button:active {
-  opacity: .8;
-}
-
-.secondary {
-  background: #e3f3eb;
-  color: #087f5b;
-}
-
-.danger {
-  width: auto;
-  padding: 8px 12px;
-  background: #ffe6e6;
-  color: #b42318;
-  margin: 0;
-}
-
-.entry {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  background: white;
-  padding: 13px;
-  border-radius: 12px;
-  margin-top: 10px;
-}
-
-.entry-info {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.entry small {
-  display: block;
-  color: #68776f;
-  margin-top: 5px;
-}
-
-.amount {
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.income {
-  color: #087f5b;
-}
-
-.expense {
-  color: #d93025;
-}
-
-.note {
-  color: #68776f;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-footer {
-  text-align: center;
-  color: #68776f;
-  padding: 25px 10px;
-  font-size: 13px;
-}
-
-@media (max-width: 350px) {
-  .cards {
-    grid-template-columns: 1fr;
-  }
-
-  .balance {
-    grid-column: span 1;
-  }
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f1f5f3;color:#172b24}
+header{background:#087f5b;color:white;padding:25px 18px;border-radius:0 0 24px 24px}
+header h1{margin:0 0 6px;font-size:27px}header p{margin:0;opacity:.9}
+.container{max-width:600px;margin:auto;padding:16px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.card{background:white;padding:17px;border-radius:15px;box-shadow:0 3px 12px #00000008}
+.card small{color:#68776f}.card h2{font-size:21px;margin:10px 0 0;overflow-wrap:anywhere}
+.balance{grid-column:span 2;background:#d8f5e7}
+h3{margin-top:25px}
+form,.panel{background:white;padding:18px;border-radius:15px;margin-top:18px}
+label{display:block;margin:12px 0 6px;font-size:14px}
+input,select,button{width:100%;padding:13px;border-radius:9px;border:1px solid #d6e0da;font-size:16px}
+button{background:#087f5b;color:white;border:none;font-weight:bold;margin-top:15px;cursor:pointer}
+button:active{opacity:.8}.secondary{background:#e3f3eb;color:#087f5b}
+.danger{width:auto;padding:8px 12px;background:#ffe6e6;color:#b42318;margin:0}
+.entry{display:flex;justify-content:space-between;align-items:center;gap:12px;background:white;padding:13px;border-radius:12px;margin-top:10px}
+.entry-info{min-width:0;overflow-wrap:anywhere}.entry small{display:block;color:#68776f;margin-top:5px}
+.amount{font-weight:bold;margin-bottom:8px}.income{color:#087f5b}.expense{color:#d93025}
+.note{color:#68776f;font-size:13px;line-height:1.6}
+footer{text-align:center;color:#68776f;padding:25px 10px;font-size:13px}
+.auth-status{font-size:14px;line-height:1.5;overflow-wrap:anywhere}
+.auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.auth-grid button{margin-top:10px}
+button:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:350px){.cards{grid-template-columns:1fr}.balance{grid-column:span 1}.auth-grid{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
-
-<header>
-  <h1>💰 TakaTrack</h1>
-  <p>আপনার টাকা, আপনার হিসাব</p>
-</header>
-
+<header><h1>💰 TakaTrack</h1><p>আপনার টাকা, আপনার হিসাব</p></header>
 <main class="container">
+  <section class="panel" id="authPanel">
+    <h3 style="margin-top:0">🔐 অ্যাকাউন্ট / লগইন</h3>
+    <p class="note">নিজের অনলাইন হিসাব দেখতে ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন। নতুন হলে অ্যাকাউন্ট তৈরি করুন।</p>
+    <label for="email">ইমেইল</label>
+    <input id="email" type="email" autocomplete="email" placeholder="name@example.com">
+    <label for="password">পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)</label>
+    <input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="পাসওয়ার্ড">
+    <div class="auth-grid">
+      <button type="button" id="registerBtn">নতুন অ্যাকাউন্ট</button>
+      <button type="button" id="loginBtn">লগইন</button>
+    </div>
+    <button type="button" class="secondary" id="logoutBtn" hidden>লগআউট</button>
+    <p class="auth-status note" id="authStatus" role="status">এখন এই ব্রাউজারের স্থানীয় হিসাব দেখানো হচ্ছে।</p>
+    <button type="button" class="secondary" id="migrateBtn" hidden>এই ডিভাইসের পুরোনো হিসাব অ্যাকাউন্টে যোগ করুন</button>
+  </section>
 
   <section class="cards">
-    <div class="card balance">
-      <small>বর্তমান ব্যালেন্স</small>
-      <h2 id="balance">৳০.০০</h2>
-    </div>
-
-    <div class="card">
-      <small>মোট আয়</small>
-      <h2 id="totalIncome" class="income">৳০</h2>
-    </div>
-
-    <div class="card">
-      <small>মোট খরচ</small>
-      <h2 id="totalExpense" class="expense">৳০</h2>
-    </div>
+    <div class="card balance"><small>বর্তমান ব্যালেন্স</small><h2 id="balance">৳০.০০</h2></div>
+    <div class="card"><small>মোট আয়</small><h2 id="totalIncome" class="income">৳০</h2></div>
+    <div class="card"><small>মোট খরচ</small><h2 id="totalExpense" class="expense">৳০</h2></div>
   </section>
 
   <form id="entryForm">
     <h3 style="margin-top:0">➕ নতুন হিসাব যোগ করুন</h3>
-
     <label for="type">হিসাবের ধরন</label>
-    <select id="type" required>
-      <option value="income">আয় (Income)</option>
-      <option value="expense">খরচ (Expense)</option>
-    </select>
-
+    <select id="type" required><option value="income">আয় (Income)</option><option value="expense">খরচ (Expense)</option></select>
     <label for="amount">টাকার পরিমাণ (৳)</label>
-    <input id="amount" type="number"
-      min="0.01" step="0.01"
-      placeholder="যেমন: 500" required>
-
+    <input id="amount" type="number" min="0.01" step="0.01" placeholder="যেমন: 500" required>
     <label for="category">ক্যাটাগরি</label>
     <select id="category" required>
-      <option>বেতন</option>
-      <option>ব্যবসা</option>
-      <option>অন্যান্য আয়</option>
-      <option>খাবার</option>
-      <option>যাতায়াত</option>
-      <option>বাসা ভাড়া</option>
-      <option>কেনাকাটা</option>
-      <option>চিকিৎসা</option>
-      <option>পড়াশোনা</option>
-      <option>দান-সদকা</option>
-      <option>অন্যান্য খরচ</option>
+      <option>বেতন</option><option>ব্যবসা</option><option>অন্যান্য আয়</option><option>খাবার</option><option>যাতায়াত</option><option>বাসা ভাড়া</option><option>কেনাকাটা</option><option>চিকিৎসা</option><option>পড়াশোনা</option><option>দান-সদকা</option><option>অন্যান্য খরচ</option>
     </select>
-
-    <label for="date">তারিখ</label>
-    <input id="date" type="date" required>
-
-    <label for="note">নোট (ঐচ্ছিক)</label>
-    <input id="note" type="text"
-      maxlength="150" placeholder="কিসের হিসাব?">
-
-    <button type="submit">হিসাব সংরক্ষণ করুন</button>
+    <label for="date">তারিখ</label><input id="date" type="date" required>
+    <label for="note">নোট (ঐচ্ছিক)</label><input id="note" type="text" maxlength="150" placeholder="কিসের হিসাব?">
+    <button type="submit" id="saveEntryBtn">হিসাব সংরক্ষণ করুন</button>
   </form>
 
   <section>
     <h3>📋 হিসাবের তালিকা</h3>
-
     <div class="panel">
       <label for="filter">হিসাব দেখুন</label>
-      <select id="filter">
-        <option value="all">সব হিসাব</option>
-        <option value="income">শুধু আয়</option>
-        <option value="expense">শুধু খরচ</option>
-      </select>
-
-      <label for="monthFilter">মাস অনুযায়ী</label>
-      <input type="month" id="monthFilter">
+      <select id="filter"><option value="all">সব হিসাব</option><option value="income">শুধু আয়</option><option value="expense">শুধু খরচ</option></select>
+      <label for="monthFilter">মাস অনুযায়ী</label><input type="month" id="monthFilter">
     </div>
-
     <div id="entries"></div>
   </section>
 
   <section class="panel">
     <h3 style="margin-top:0">💾 আপনার ডেটা</h3>
-    <p class="note">
-      হিসাব এই ব্রাউজারের Local Storage-এ রাখা হয়।
-      ব্রাউজারের ডেটা মুছে গেলে হিসাব হারাতে পারেন।
-      তাই নিয়মিত Backup রাখুন।
-    </p>
-
-    <button type="button" id="exportBtn">
-      Backup ডাউনলোড করুন
-    </button>
-
-    <label for="importFile">আগের Backup ফিরিয়ে আনুন</label>
-    <input type="file" id="importFile" accept=".json">
-
-    <button type="button" class="secondary" id="installBtn"
-      hidden>
-      📱 অ্যাপ ইনস্টল করুন
-    </button>
+    <p class="note">লগইন না থাকলে হিসাব এই ব্রাউজারের Local Storage-এ থাকে। লগইন থাকলে হিসাব আপনার Firebase অ্যাকাউন্টে সংরক্ষিত হয়। নিয়মিত Backup রাখুন।</p>
+    <button type="button" id="exportBtn">Backup ডাউনলোড করুন</button>
+    <label for="importFile">Backup থেকে হিসাব যোগ করুন</label><input type="file" id="importFile" accept=".json">
+    <button type="button" class="secondary" id="installBtn" hidden>📱 অ্যাপ ইনস্টল করুন</button>
   </section>
-
 </main>
+<footer>TakaTrack © 2026<br>সহজ হিসাব, সুন্দর ভবিষ্যৎ 💚</footer>
 
-<footer>
-  TakaTrack © 2026<br>
-  সহজ হিসাব, সুন্দর ভবিষ্যৎ 💚
-</footer>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import {
+  getFirestore, collection, getDocs, addDoc, deleteDoc, doc
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDG3esUCYtU8jw_4jQGLW_ajzu5Rw4qYMw",
+  authDomain: "takatrack-8c2ec.firebaseapp.com",
+  projectId: "takatrack-8c2ec",
+  storageBucket: "takatrack-8c2ec.firebasestorage.app",
+  messagingSenderId: "116009412611",
+  appId: "1:116009412611:web:982a5ba62a961573368636"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 const KEY = "takatrack_entries_v1";
-
-let entries = [];
-
-try {
-  const saved = localStorage.getItem(KEY);
-  entries = saved ? JSON.parse(saved) : [];
-
-  if (!Array.isArray(entries)) entries = [];
-} catch (e) {
-  entries = [];
-}
-
 const $ = id => document.getElementById(id);
 
-function money(value) {
-  return "৳" + Number(value).toLocaleString("en-BD", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2
-  });
+function readLocal() {
+  try {
+    const saved = localStorage.getItem(KEY);
+    const data = saved ? JSON.parse(saved) : [];
+    return Array.isArray(data) ? data.filter(validEntry) : [];
+  } catch { return []; }
 }
+function validEntry(e) {
+  return !!e && typeof e === "object" &&
+    ["income", "expense"].includes(e.type) &&
+    Number.isFinite(Number(e.amount)) && Number(e.amount) > 0 &&
+    typeof e.category === "string" &&
+    typeof e.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(e.date) &&
+    typeof (e.note ?? "") === "string";
+}
+let localEntries = readLocal();
+let entries = [...localEntries];
+let currentUser = null;
+let cloudBusy = false;
 
+function money(value) {
+  return "৳" + Number(value).toLocaleString("en-BD", {minimumFractionDigits:0, maximumFractionDigits:2});
+}
 function today() {
   const d = new Date();
-  return [
-    d.getFullYear(),
-    String(d.getMonth() + 1).padStart(2, "0"),
-    String(d.getDate()).padStart(2, "0")
-  ].join("-");
+  return [d.getFullYear(), String(d.getMonth()+1).padStart(2,"0"), String(d.getDate()).padStart(2,"0")].join("-");
 }
-
 $("date").value = today();
+function setStatus(message) { $("authStatus").textContent = message; }
 
-function save() {
+async function getCloudEntries() {
+  const snap = await getDocs(collection(db, "users", currentUser.uid, "transactions"));
+  return snap.docs.map(s => ({ ...s.data(), id: s.id }));
+}
+async function refreshCloud() {
+  if (!currentUser) return;
+  cloudBusy = true;
+  $("saveEntryBtn").disabled = true;
   try {
-    localStorage.setItem(KEY, JSON.stringify(entries));
-    return true;
-  } catch (e) {
-    alert("ডেটা সংরক্ষণ করা যায়নি। জায়গা খালি করুন এবং Backup রাখুন।");
-    return false;
+    entries = await getCloudEntries();
+    render();
+    setStatus("লগইন আছে: " + currentUser.email + " — হিসাব অনলাইনে সংরক্ষিত হচ্ছে।");
+    $("migrateBtn").hidden = localEntries.length === 0;
+  } catch (err) {
+    setStatus("ক্লাউড হিসাব লোড হয়নি: " + friendlyError(err));
+  } finally {
+    cloudBusy = false;
+    $("saveEntryBtn").disabled = false;
   }
 }
+function friendlyError(err) {
+  const code = err?.code || "";
+  if (code.includes("permission-denied")) return "Firestore Rules বা লগইন অনুমতি যাচাই করুন।";
+  if (code.includes("unavailable")) return "ইন্টারনেট সংযোগ পরীক্ষা করুন।";
+  if (code.includes("email-already-in-use")) return "এই ইমেইলে আগে থেকেই অ্যাকাউন্ট আছে। লগইন করুন।";
+  if (code.includes("invalid-email")) return "সঠিক ইমেইল লিখুন।";
+  if (code.includes("weak-password")) return "কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন।";
+  if (code.includes("invalid-credential") || code.includes("wrong-password") || code.includes("user-not-found")) return "ইমেইল বা পাসওয়ার্ড সঠিক নয়।";
+  return err?.message || "একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।";
+}
+async function requireCloud() {
+  if (!currentUser) throw new Error("অনলাইনে সংরক্ষণ করতে আগে লগইন করুন।");
+}
+async function saveEntryToCloud(entry) {
+  await requireCloud();
+  const data = { type:entry.type, amount:Number(entry.amount), category:entry.category, date:entry.date, note:entry.note || "" };
+  const ref = await addDoc(collection(db, "users", currentUser.uid, "transactions"), data);
+  return { ...data, id:ref.id };
+}
+
+$("registerBtn").addEventListener("click", async () => {
+  const email = $("email").value.trim(), password = $("password").value;
+  if (!email || password.length < 6) { setStatus("ইমেইল দিন এবং অন্তত ৬ অক্ষরের পাসওয়ার্ড লিখুন।"); return; }
+  $("registerBtn").disabled = true;
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    setStatus("অ্যাকাউন্ট তৈরি হয়েছে। আপনার হিসাব লোড হচ্ছে…");
+  } catch (err) { setStatus(friendlyError(err)); }
+  finally { $("registerBtn").disabled = false; }
+});
+$("loginBtn").addEventListener("click", async () => {
+  const email = $("email").value.trim(), password = $("password").value;
+  if (!email || !password) { setStatus("ইমেইল ও পাসওয়ার্ড লিখুন।"); return; }
+  $("loginBtn").disabled = true;
+  try { await signInWithEmailAndPassword(auth, email, password); }
+  catch (err) { setStatus(friendlyError(err)); }
+  finally { $("loginBtn").disabled = false; }
+});
+$("logoutBtn").addEventListener("click", async () => {
+  try { await signOut(auth); }
+  catch (err) { setStatus(friendlyError(err)); }
+});
+
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  $("logoutBtn").hidden = !user;
+  $("registerBtn").hidden = !!user;
+  $("loginBtn").hidden = !!user;
+  $("email").disabled = !!user;
+  $("password").disabled = !!user;
+  if (user) {
+    setStatus("লগইন হয়েছে। আপনার ক্লাউড হিসাব লোড হচ্ছে…");
+    await refreshCloud();
+  } else {
+    // Never display the previous account's cloud data after logout.
+    entries = readLocal();
+    localEntries = [...entries];
+    $("migrateBtn").hidden = true;
+    setStatus("লগআউট আছে: এই ব্রাউজারের স্থানীয় হিসাব দেখানো হচ্ছে।");
+    render();
+  }
+});
 
 function render() {
-  const income = entries
-    .filter(e => e.type === "income")
-    .reduce((sum, e) => sum + e.amount, 0);
-
-  const expense = entries
-    .filter(e => e.type === "expense")
-    .reduce((sum, e) => sum + e.amount, 0);
-
+  const income = entries.filter(e=>e.type==="income").reduce((s,e)=>s+Number(e.amount),0);
+  const expense = entries.filter(e=>e.type==="expense").reduce((s,e)=>s+Number(e.amount),0);
   $("totalIncome").textContent = money(income);
   $("totalExpense").textContent = money(expense);
-  $("balance").textContent = money(income - expense);
-
-  const filter = $("filter").value;
-  const month = $("monthFilter").value;
-
-  const shown = entries
-    .filter(e => filter === "all" || e.type === filter)
-    .filter(e => !month || e.date.startsWith(month))
-    .slice()
-    .sort((a, b) => b.date.localeCompare(a.date));
-
+  $("balance").textContent = money(income-expense);
+  const filter = $("filter").value, month = $("monthFilter").value;
+  const shown = entries.filter(e=>filter==="all"||e.type===filter)
+    .filter(e=>!month||e.date.startsWith(month))
+    .slice().sort((a,b)=>b.date.localeCompare(a.date));
   const list = $("entries");
   list.replaceChildren();
-
-  if (shown.length === 0) {
-    const p = document.createElement("p");
-    p.className = "note";
-    p.textContent = "এখনো কোনো হিসাব নেই। প্রথম হিসাবটি যোগ করুন!";
-    list.appendChild(p);
-    return;
+  if (!shown.length) {
+    const p=document.createElement("p"); p.className="note";
+    p.textContent="এখনো কোনো হিসাব নেই। প্রথম হিসাবটি যোগ করুন!"; list.appendChild(p); return;
   }
-
-  shown.forEach(e => {
-    const row = document.createElement("div");
-    row.className = "entry";
-
-    const info = document.createElement("div");
-    info.className = "entry-info";
-
-    const title = document.createElement("strong");
-    title.textContent = e.category;
-
-    const details = document.createElement("small");
-    details.textContent = e.date + (e.note ? " • " + e.note : "");
-
-    const amount = document.createElement("div");
-    amount.className = "amount " + e.type;
-    amount.textContent =
-      (e.type === "income" ? "+" : "−") + money(e.amount);
-
-    const del = document.createElement("button");
-    del.type = "button";
-    del.className = "danger";
-    del.textContent = "মুছুন";
-
-    del.addEventListener("click", () => {
-      if (!confirm("এই হিসাবটি মুছে ফেলবেন?")) return;
-
-      const previous = entries;
-      entries = entries.filter(x => x.id !== e.id);
-
-      if (save()) {
-        render();
-      } else {
-        entries = previous;
-      }
+  shown.forEach(e=>{
+    const row=document.createElement("div"); row.className="entry";
+    const info=document.createElement("div"); info.className="entry-info";
+    const title=document.createElement("strong"); title.textContent=e.category;
+    const details=document.createElement("small"); details.textContent=e.date+(e.note?" • "+e.note:"");
+    const amount=document.createElement("div"); amount.className="amount "+e.type;
+    amount.textContent=(e.type==="income"?"+":"−")+money(e.amount);
+    const del=document.createElement("button"); del.type="button"; del.className="danger"; del.textContent="মুছুন";
+    del.addEventListener("click",async()=>{
+      if(!confirm("এই হিসাবটি মুছে ফেলবেন?")) return;
+      try {
+        if(currentUser) await deleteDoc(doc(db,"users",currentUser.uid,"transactions",e.id));
+        else { entries=entries.filter(x=>x.id!==e.id); localStorage.setItem(KEY,JSON.stringify(entries)); localEntries=[...entries]; }
+        entries=entries.filter(x=>x.id!==e.id); render();
+      } catch(err) { alert("হিসাব মুছতে সমস্যা হয়েছে: "+friendlyError(err)); }
     });
-
-    info.append(title, details);
-    row.append(info);
-
-    const right = document.createElement("div");
-    right.append(amount, del);
-    row.append(right);
-
-    list.appendChild(row);
+    info.append(title,details); row.append(info);
+    const right=document.createElement("div"); right.append(amount,del); row.append(right); list.appendChild(row);
   });
 }
 
-$("entryForm").addEventListener("submit", event => {
+$("entryForm").addEventListener("submit", async event=>{
   event.preventDefault();
-
-  const amount = Number($("amount").value);
-  const date = $("date").value;
-
-  if (!Number.isFinite(amount) || amount <= 0) {
-    alert("সঠিক টাকার পরিমাণ লিখুন।");
-    return;
-  }
-
-  if (!date) {
-    alert("তারিখ নির্বাচন করুন।");
-    return;
-  }
-
-  const entry = {
-    id: Date.now().toString() + Math.random().toString(36).slice(2),
-    type: $("type").value,
-    amount,
-    category: $("category").value,
-    date,
-    note: $("note").value.trim()
-  };
-
-  entries.push(entry);
-
-  if (save()) {
-    $("amount").value = "";
-    $("note").value = "";
-    render();
-    alert("হিসাব সংরক্ষণ হয়েছে!");
-  } else {
-    entries.pop();
-  }
-});
-
-$("filter").addEventListener("change", render);
-$("monthFilter").addEventListener("change", render);
-
-$("exportBtn").addEventListener("click", () => {
-  const blob = new Blob(
-    [JSON.stringify(entries, null, 2)],
-    { type: "application/json" }
-  );
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-
-  a.href = url;
-  a.download = "takatrack-backup-" + today() + ".json";
-  a.click();
-
-  URL.revokeObjectURL(url);
-});
-
-$("importFile").addEventListener("change", async event => {
-  const file = event.target.files[0];
-  if (!file) return;
-
+  const amount=Number($("amount").value), date=$("date").value;
+  if(!Number.isFinite(amount)||amount<=0){alert("সঠিক টাকার পরিমাণ লিখুন।");return;}
+  if(!date){alert("তারিখ নির্বাচন করুন।");return;}
+  const entry={type:$("type").value,amount,category:$("category").value,date,note:$("note").value.trim()};
+  const button=$("saveEntryBtn"); button.disabled=true;
   try {
-    if (file.size > 5 * 1024 * 1024) {
-      throw new Error("ফাইলটি অনেক বড়।");
+    if(currentUser) entries.push(await saveEntryToCloud(entry));
+    else {
+      entry.id=Date.now().toString()+Math.random().toString(36).slice(2);
+      entries.push(entry);
+      try { localStorage.setItem(KEY,JSON.stringify(entries)); localEntries=[...entries]; }
+      catch { entries.pop(); throw new Error("ডেটা সংরক্ষণ করা যায়নি। জায়গা খালি করুন এবং Backup রাখুন।"); }
     }
+    $("amount").value=""; $("note").value=""; render();
+    alert(currentUser?"হিসাব আপনার অ্যাকাউন্টে অনলাইনে সংরক্ষণ হয়েছে!":"হিসাব এই ব্রাউজারে সংরক্ষণ হয়েছে। অনলাইনে রাখতে লগইন করুন।");
+  } catch(err) { alert("হিসাব সংরক্ষণ হয়নি: "+friendlyError(err)); }
+  finally { button.disabled=false; }
+});
+$("filter").addEventListener("change",render);
+$("monthFilter").addEventListener("change",render);
 
-    const data = JSON.parse(await file.text());
+$("exportBtn").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify(entries.map(({id,...e})=>({id,...e})),null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob), a=document.createElement("a");
+  a.href=url; a.download="takatrack-backup-"+today()+".json"; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
 
-    if (!Array.isArray(data) || data.length > 10000) {
-      throw new Error("Backup ফাইল সঠিক নয়।");
-    }
-
-    const valid = data.every(e =>
-      e &&
-      typeof e.id === "string" &&
-      ["income", "expense"].includes(e.type) &&
-      Number.isFinite(e.amount) &&
-      e.amount > 0 &&
-      typeof e.category === "string" &&
-      typeof e.date === "string" &&
-      /^\d{4}-\d{2}-\d{2}$/.test(e.date) &&
-      typeof e.note === "string"
-    );
-
-    if (!valid) throw new Error("Backup-এর তথ্য সঠিক নয়।");
-
-    if (!confirm("বর্তমান হিসাবের বদলে Backup-এর হিসাব বসবে। এগোবেন?")) {
-      return;
-    }
-
-    const old = entries;
-    entries = data;
-
-    if (save()) {
-      render();
-      alert("Backup ফিরিয়ে আনা হয়েছে!");
+$("importFile").addEventListener("change",async event=>{
+  const file=event.target.files[0]; if(!file)return;
+  try {
+    if(file.size>5*1024*1024) throw new Error("ফাইলটি অনেক বড়।");
+    const data=JSON.parse(await file.text());
+    if(!Array.isArray(data)||data.length>10000||!data.every(validEntry)) throw new Error("Backup ফাইল সঠিক নয়।");
+    if(!confirm("Backup-এর "+data.length+"টি হিসাব বর্তমান হিসাবের সঙ্গে যোগ হবে। এগোবেন?")) return;
+    if(currentUser) {
+      for(const e of data) await saveEntryToCloud(e);
+      await refreshCloud();
     } else {
-      entries = old;
+      const normalized=data.map(e=>({...e,id:typeof e.id==="string"?e.id:Date.now().toString()+Math.random().toString(36).slice(2)}));
+      entries=[...entries,...normalized];
+      localStorage.setItem(KEY,JSON.stringify(entries)); localEntries=[...entries]; render();
     }
-  } catch (error) {
-    alert("Backup খোলা যায়নি: " + error.message);
-  } finally {
-    event.target.value = "";
-  }
+    alert("Backup-এর হিসাব যোগ করা হয়েছে!");
+  } catch(err) { alert("Backup যোগ করা যায়নি: "+friendlyError(err)); }
+  finally { event.target.value=""; }
+});
+
+$("migrateBtn").addEventListener("click",async()=>{
+  if(!currentUser) return;
+  if(!localEntries.length){alert("এই ব্রাউজারে পুরোনো হিসাব পাওয়া যায়নি।");return;}
+  const yes=confirm("এই ব্রাউজারে থাকা "+localEntries.length+"টি পুরোনো হিসাব "+currentUser.email+" অ্যাকাউন্টে যোগ হবে। এগুলো কি এই অ্যাকাউন্টেরই হিসাব? অন্য কারও হিসাব হলে Cancel চাপুন।");
+  if(!yes)return;
+  $("migrateBtn").disabled=true;
+  try {
+    for(const e of localEntries) await saveEntryToCloud(e);
+    await refreshCloud();
+    setStatus("পুরোনো হিসাব অ্যাকাউন্টে যোগ হয়েছে।");
+    alert("পুরোনো হিসাব ক্লাউড অ্যাকাউন্টে যোগ হয়েছে!");
+  } catch(err) { alert("পুরোনো হিসাব যোগ করতে সমস্যা হয়েছে: "+friendlyError(err)); }
+  finally { $("migrateBtn").disabled=false; }
 });
 
 let installPrompt;
-
-window.addEventListener("beforeinstallprompt", event => {
-  event.preventDefault();
-  installPrompt = event;
-  $("installBtn").hidden = false;
+window.addEventListener("beforeinstallprompt",event=>{
+  event.preventDefault(); installPrompt=event; $("installBtn").hidden=false;
 });
-
-$("installBtn").addEventListener("click", async () => {
-  if (!installPrompt) return;
-
-  installPrompt.prompt();
-  await installPrompt.userChoice;
-  installPrompt = null;
-  $("installBtn").hidden = true;
+$("installBtn").addEventListener("click",async()=>{
+  if(!installPrompt)return;
+  installPrompt.prompt(); await installPrompt.userChoice; installPrompt=null; $("installBtn").hidden=true;
 });
-
 render();
 </script>
-
 </body>
 </html>
