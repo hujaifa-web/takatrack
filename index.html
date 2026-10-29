@@ -26,6 +26,42 @@ label{display:block;font-size:13px;font-weight:650;margin:12px 0 6px}input,selec
  <div class="balance"><div class="row"><span class="muted">💳 &nbsp; বর্তমান ব্যালেন্স</span><button class="eye" id="toggleBalance" type="button">◉</button></div><div class="big" id="balance">৳০</div><div class="row"><span class="muted">আপনার হিসাবের সারসংক্ষেপ</span><span class="pill">আয় − খরচ</span></div></div>
  <div class="grid"><div class="card"><div class="ico">↗</div><div class="label">মোট আয়</div><div class="val income" id="totalIncome">৳০</div></div><div class="card"><div class="ico red">↙</div><div class="label">মোট খরচ</div><div class="val expense" id="totalExpense">৳০</div></div></div>
  <div class="heading"><h2>দ্রুত যোগ করুন</h2><span>এক ট্যাপে শুরু</span></div><div class="quick"><button id="quickIncome"><b>＋</b>আয় যোগ</button><button id="quickExpense"><b class="redb">−</b>খরচ যোগ</button><button id="quickReport"><b class="blueb">▥</b>রিপোর্ট</button></div>
+ <div class="heading">
+  <h2>🎯 মাসিক বাজেট</h2>
+  <span id="budgetMonth"></span>
+</div>
+
+<section class="panel" id="budgetPanel">
+  <div class="row">
+    <span class="muted">এই মাসের বাজেট</span>
+    <span class="pill" id="budgetPercent">০% ব্যবহৃত</span>
+  </div>
+
+  <div class="big" id="budgetAmount">৳০</div>
+
+  <div class="row">
+    <span class="muted">খরচ হয়েছে</span>
+    <strong id="budgetSpent">৳০</strong>
+  </div>
+
+  <div class="row" style="margin-top:10px">
+    <span class="muted">বাকি আছে</span>
+    <strong id="budgetRemaining">৳০</strong>
+  </div>
+
+  <div style="height:10px;background:#e7eee9;border-radius:99px;margin-top:16px;overflow:hidden">
+    <div id="budgetProgress" style="height:100%;width:0%;background:#087f5b;border-radius:99px;transition:width .3s"></div>
+  </div>
+
+  <p class="hint" id="budgetMessage">তোমার মাসিক বাজেট নির্ধারণ করো।</p>
+
+  <label for="budgetInput">মাসিক বাজেট (৳)</label>
+  <input id="budgetInput" type="number" min="1" step="0.01" placeholder="যেমন: 10000">
+
+  <button class="primary" id="saveBudgetBtn" type="button">
+    বাজেট সংরক্ষণ করুন
+  </button>
+</section>
  <div class="heading"><h2>মাসিক ওভারভিউ</h2><span id="chartMonthLabel">শেষ ৬ মাস</span></div>
  <section class="panel"><div class="row chart-head"><strong>আয় বনাম খরচ</strong><select id="chartPeriod"><option value="6">শেষ ৬ মাস</option><option value="12">শেষ ১২ মাস</option></select></div><div class="legend"><span><i class="dot" style="background:#0a9b6b"></i>আয়</span><span><i class="dot" style="background:#f07878"></i>খরচ</span></div><div class="chart" id="chart"></div><div class="labels" id="chartLabels"></div><p class="hint" id="chartNote">লেনদেন যোগ হলে এখানে চার্ট দেখা যাবে।</p></section>
  <div class="heading"><h2>সাম্প্রতিক লেনদেন</h2><button id="seeAllBtn" style="width:auto;margin:0;padding:0;background:transparent;color:var(--g);border:0;font-size:12px">সব দেখুন →</button></div><div class="entries" id="recentEntries"></div>
@@ -39,12 +75,32 @@ label{display:block;font-size:13px;font-weight:650;margin:12px 0 6px}input,selec
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import{getFirestore,collection,getDocs,addDoc,deleteDoc,doc}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import{getFirestore,collection,getDocs,addDoc,deleteDoc,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 const firebaseConfig={apiKey:"AIzaSyDG3esUCYtU8jw_4jQGLW_ajzu5Rw4qYMw",authDomain:"takatrack-8c2ec.firebaseapp.com",projectId:"takatrack-8c2ec",storageBucket:"takatrack-8c2ec.firebasestorage.app",messagingSenderId:"116009412611",appId:"1:116009412611:web:982a5ba62a961573368636"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),KEY="takatrack_entries_v1",$=id=>document.getElementById(id);
 function validEntry(e){return!!e&&typeof e==="object"&&["income","expense"].includes(e.type)&&Number.isFinite(Number(e.amount))&&Number(e.amount)>0&&typeof e.category==="string"&&typeof e.date==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(e.date)&&typeof(e.note??"")==="string"}
 function readLocal(){try{let d=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(d)?d.filter(validEntry):[]}catch{return[]}}
 let localEntries=readLocal(),entries=[...localEntries],currentUser=null,showBalance=true;
+const BUDGET_KEY = "takatrack_monthly_budget_v1";
+
+function currentMonth() {
+  return today().slice(0, 7);
+}
+
+function readBudget() {
+  try {
+    const data = JSON.parse(localStorage.getItem(BUDGET_KEY) || "{}");
+    return Number(data[currentMonth()] || 0);
+  } catch {
+    return 0;
+  }
+}
+
+function saveLocalBudget(amount) {
+  const data = JSON.parse(localStorage.getItem(BUDGET_KEY) || "{}");
+  data[currentMonth()] = amount;
+  localStorage.setItem(BUDGET_KEY, JSON.stringify(data));
+}
 function money(v){return"৳"+Number(v).toLocaleString("en-BD",{maximumFractionDigits:2})}
 function today(){let d=new Date();return[d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")}
 $("date").value=today();function setStatus(t){$("authStatus").textContent=t}
@@ -65,7 +121,54 @@ function icon(e){if(e.type==="income")return"↗";if(e.category==="খাবা�
 function makeEntry(e){let row=document.createElement("div");row.className="entry";let left=document.createElement("div");left.className="entry-left";let ic=document.createElement("div");ic.className="entry-icon "+(e.type==="expense"?"red":"");ic.textContent=icon(e);let info=document.createElement("div");info.className="entry-info";let title=document.createElement("strong");title.textContent=e.category;let details=document.createElement("small");details.textContent=e.date+(e.note?" · "+e.note:"");info.append(title,details);left.append(ic,info);let right=document.createElement("div");right.className="entry-right";let amount=document.createElement("div");amount.className="amount "+e.type;amount.textContent=(e.type==="income"?"+":"−")+money(e.amount);let del=document.createElement("button");del.className="danger";del.textContent="মুছুন";del.onclick=async()=>{if(!confirm("এই হিসাবটি মুছে ফেলবেন?"))return;try{if(currentUser)await deleteDoc(doc(db,"users",currentUser.uid,"transactions",e.id));else{entries=entries.filter(x=>x.id!==e.id);localStorage.setItem(KEY,JSON.stringify(entries));localEntries=[...entries]}entries=entries.filter(x=>x.id!==e.id);render()}catch(err){alert("হিসাব মুছতে সমস্যা হয়েছে: "+friendlyError(err))}};right.append(amount,del);row.append(left,right);return row}
 function totals(a){return{income:a.filter(e=>e.type==="income").reduce((s,e)=>s+Number(e.amount),0),expense:a.filter(e=>e.type==="expense").reduce((s,e)=>s+Number(e.amount),0)}}
 function renderChart(){let n=Number($("chartPeriod").value)||6,ms=[],now=new Date();for(let i=n-1;i>=0;i--){let d=new Date(now.getFullYear(),now.getMonth()-i,1);ms.push({key:d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"),label:d.toLocaleDateString("bn-BD",{month:"short"}),income:0,expense:0})}entries.forEach(e=>{let m=ms.find(x=>x.key===e.date.slice(0,7));if(m)m[e.type]+=Number(e.amount)});let max=Math.max(1,...ms.flatMap(m=>[m.income,m.expense]));$("chart").replaceChildren();$("chartLabels").replaceChildren();ms.forEach(m=>{let col=document.createElement("div");col.className="month";["income","expense"].forEach(t=>{let b=document.createElement("div");b.className="bar "+(t==="income"?"in":"out");b.style.height=Math.max(3,m[t]/max*100)+"%";b.title=(t==="income"?"আয়: ":"খরচ: ")+money(m[t]);col.append(b)});$("chart").append(col);let l=document.createElement("span");l.textContent=m.label;$("chartLabels").append(l)});$("chartMonthLabel").textContent=n===6?"শেষ ৬ মাস":"শেষ ১২ মাস";$("chartNote").textContent=entries.length?"আপনার লেনদেন অনুযায়ী মাসভিত্তিক আয় ও খরচ।":"লেনদেন যোগ হলে এখানে চার্ট দেখা যাবে।"}
-function render(){let t=totals(entries);$("totalIncome").textContent=money(t.income);$("totalExpense").textContent=money(t.expense);$("balance").textContent=showBalance?money(t.income-t.expense):"৳ ••••••";$("reportIncome").textContent=money(t.income);$("reportExpense").textContent=money(t.expense);$("reportBalance").textContent=money(t.income-t.expense);let mt=totals(entries.filter(e=>e.date.startsWith(today().slice(0,7))));$("thisMonthSummary").textContent="এই মাসে আয় "+money(mt.income)+" · খরচ "+money(mt.expense)+" · অবশিষ্ট "+money(mt.income-mt.expense);let f=$("filter").value,m=$("monthFilter").value,sorted=entries.slice().sort((a,b)=>b.date.localeCompare(a.date)),shown=sorted.filter(e=>(f==="all"||e.type===f)&&(!m||e.date.startsWith(m)));$("entries").replaceChildren();$("transactionCount").textContent=shown.length.toLocaleString("bn-BD")+"টি";if(!shown.length){let p=document.createElement("div");p.className="empty";p.textContent="এখনো কোনো হিসাব নেই।";$("entries").append(p)}else shown.forEach(e=>$("entries").append(makeEntry(e)));$("recentEntries").replaceChildren();let recent=sorted.slice(0,5);if(!recent.length){let p=document.createElement("div");p.className="panel empty";p.textContent="স্বাগতম! প্রথম আয় বা খরচ যোগ করলে এখানে দেখা যাবে।";$("recentEntries").append(p)}else recent.forEach(e=>$("recentEntries").append(makeEntry(e)));renderChart()}
+function renderBudget() {
+  const budget = readBudget();
+  const month = currentMonth();
+
+  const spent = entries
+    .filter(e => e.type === "expense" && e.date.startsWith(month))
+    .reduce((sum, e) => sum + Number(e.amount), 0);
+
+  const remaining = budget - spent;
+  const percent = budget > 0 ? Math.round(spent / budget * 100) : 0;
+
+  $("budgetMonth").textContent = month;
+  $("budgetAmount").textContent = money(budget);
+  $("budgetSpent").textContent = money(spent);
+  $("budgetRemaining").textContent = money(remaining);
+  $("budgetPercent").textContent = percent + "% ব্যবহৃত";
+
+  $("budgetProgress").style.width =
+    Math.min(100, Math.max(0, percent)) + "%";
+
+  $("budgetProgress").style.background =
+    percent >= 100 ? "#d94b4b" :
+    percent >= 80 ? "#e9a23b" : "#087f5b";
+
+  $("budgetMessage").textContent =
+    budget <= 0 ? "তোমার মাসিক বাজেট নির্ধারণ করো।" :
+    remaining < 0 ? "⚠️ বাজেটের চেয়ে " + money(-remaining) + " বেশি খরচ হয়েছে!" :
+    percent >= 80 ? "⚠️ সতর্ক থাকো! বাজেটের বেশিরভাগ খরচ হয়ে গেছে।" :
+    "💚 বাজেটের মধ্যে আছো। আরও বাকি " + money(remaining) + "।";
+}
+function render(){let t=totals(entries);$("totalIncome").textContent=money(t.income);$("totalExpense").textContent=money(t.expense);$("balance").textContent=showBalance?money(t.income-t.expense):"৳ ••••••";$("reportIncome").textContent=money(t.income);$("reportExpense").textContent=money(t.expense);$("reportBalance").textContent=money(t.income-t.expense);let mt=totals(entries.filter(e=>e.date.startsWith(today().slice(0,7))));$("thisMonthSummary").textContent="এই মাসে আয় "+money(mt.income)+" · খরচ "+money(mt.expense)+" · অবশিষ্ট "+money(mt.income-mt.expense);let f=$("filter").value,m=$("monthFilter").value,sorted=entries.slice().sort((a,b)=>b.date.localeCompare(a.date)),shown=sorted.filter(e=>(f==="all"||e.type===f)&&(!m||e.date.startsWith(m)));$("entries").replaceChildren();$("transactionCount").textContent=shown.length.toLocaleString("bn-BD")+"টি";if(!shown.length){let p=document.createElement("div");p.className="empty";p.textContent="এখনো কোনো হিসাব নেই।";$("entries").append(p)}else shown.forEach(e=>$("entries").append(makeEntry(e)));$("recentEntries").replaceChildren();let recent=sorted.slice(0,5);if(!recent.length){let p=document.createElement("div");p.className="panel empty";p.textContent="স্বাগতম! প্রথম আয় বা খরচ যোগ করলে এখানে দেখা যাবে।";$("recentEntries").append(p)}else recent.forEach(e=>$("recentEntries").append(makeEntry(e)));renderBudget();renderChart()}
+$("saveBudgetBtn").onclick = () => {
+  const amount = Number($("budgetInput").value);
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    alert("সঠিক মাসিক বাজেট লিখুন।");
+    return;
+  }
+
+  try {
+    saveLocalBudget(amount);
+    $("budgetInput").value = "";
+    render();
+    alert("মাসিক বাজেট সংরক্ষণ হয়েছে!");
+  } catch (error) {
+    alert("বাজেট সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।");
+  }
+};
 $("toggleBalance").onclick=()=>{showBalance=!showBalance;$("toggleBalance").textContent=showBalance?"◉":"◎";render()};$("chartPeriod").onchange=renderChart;$("filter").onchange=render;$("monthFilter").onchange=render;
 $("entryForm").onsubmit=async ev=>{ev.preventDefault();let amount=Number($("amount").value),date=$("date").value;if(!Number.isFinite(amount)||amount<=0||!date){alert("সঠিক টাকার পরিমাণ ও তারিখ দিন।");return}let e={type:$("type").value,amount,category:$("category").value,date,note:$("note").value.trim()},btn=$("saveEntryBtn");btn.disabled=true;try{if(currentUser)entries.push(await saveEntryToCloud(e));else{e.id=Date.now().toString()+Math.random().toString(36).slice(2);entries.push(e);try{localStorage.setItem(KEY,JSON.stringify(entries));localEntries=[...entries]}catch{entries.pop();throw Error("ডেটা সংরক্ষণ করা যায়নি। Backup রাখুন।")}}$("amount").value="";$("note").value="";render();alert(currentUser?"হিসাব অনলাইনে সংরক্ষণ হয়েছে!":"হিসাব এই ব্রাউজারে সংরক্ষণ হয়েছে। অনলাইনে রাখতে লগইন করুন।");closeForm()}catch(err){alert("হিসাব সংরক্ষণ হয়নি: "+friendlyError(err))}finally{btn.disabled=false}};
 $("exportBtn").onclick=()=>{let blob=new Blob([JSON.stringify(entries.map(({id,...e})=>({id,...e})),null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="takatrack-backup-"+today()+".json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
