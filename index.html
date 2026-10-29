@@ -622,6 +622,31 @@ import{getMessaging,getToken,onMessage}from"https://www.gstatic.com/firebasejs/1
 const firebaseConfig={apiKey:"AIzaSyDG3esUCYtU8jw_4jQGLW_ajzu5Rw4qYMw",authDomain:"takatrack-8c2ec.firebaseapp.com",projectId:"takatrack-8c2ec",storageBucket:"takatrack-8c2ec.firebasestorage.app",messagingSenderId:"116009412611",appId:"1:116009412611:web:982a5ba62a961573368636"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),KEY="takatrack_entries_v1",$=id=>document.getElementById(id);
 const messaging = getMessaging(app);
+async function enableNotifications() {
+  try {
+    const permission = await Notification.requestPermission();
+
+    if (permission !== "granted") {
+      alert("Notification permission দেওয়া হয়নি।");
+      return;
+    }
+
+    const registration = await navigator.serviceWorker.register(
+      "./firebase-messaging-sw.js"
+    );
+
+    const token = await getToken(messaging, {
+      vapidKey: "BPxSX8VtggL0hBjzjG1tfbuEnB4JGK6ylRHIen37_OHddij5WKkD3pcifhk_HoYGfZm3TSobFdEK1jv2Q76E6DE",
+      serviceWorkerRegistration: registration
+    });
+
+    console.log("Notification token:", token);
+    alert(token ? "Notification registration successful!" : "Token পাওয়া যায়নি।");
+  } catch (error) {
+    console.error("Notification setup error:", error);
+    alert("Notification চালু হয়নি। Console-এ error দেখো।");
+  }
+}
 function validEntry(e){return!!e&&typeof e==="object"&&["income","expense"].includes(e.type)&&Number.isFinite(Number(e.amount))&&Number(e.amount)>0&&typeof e.category==="string"&&typeof e.date==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(e.date)&&typeof(e.note??"")==="string"}
 function readLocal(){try{let d=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(d)?d.filter(validEntry):[]}catch{return[]}}
 let localEntries=readLocal(),entries=[...localEntries],currentUser=null,showBalance=true;
@@ -924,4 +949,4 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
-</body></html>
+
