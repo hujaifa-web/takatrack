@@ -661,7 +661,10 @@ container.append(item);
   $("budgetAmount").textContent = money(budget);
   $("budgetSpent").textContent = money(spent);
   $("budgetRemaining").textContent = money(remaining);
-  $("budgetPercent").textContent = percent + "% ব্যবহৃত";
+  $("budgetPercent").textContent =
+  percent >= 100
+    ? percent + "% · বাজেট ছাড়িয়েছে ⚠️"
+    : percent + "% ব্যবহৃত";
 
   $("budgetProgress").style.width =
     Math.min(100, Math.max(0, percent)) + "%";
