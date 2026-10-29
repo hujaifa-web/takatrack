@@ -139,6 +139,41 @@ border: 1px solid #f1d1d1;
 border-radius: 10px;
 transition: background .2s ease;
 }
+ /* Smooth Premium Animations */
+.card,
+.panel,
+.balance {
+transition: box-shadow .25s ease, border-color .25s ease;
+}
+
+@media (hover: hover) {
+.card:hover,
+.panel:hover {
+box-shadow: 0 14px 32px #123d2b16;
+border-color: #d8c58b;
+}
+
+button.primary:hover {
+box-shadow: 0 10px 24px #087f5b35;
+}
+
+.entry:hover {
+box-shadow: 0 10px 24px #123d2b14;
+border-color: #d8c58b;
+}
+}
+
+button,
+.entry,
+.card,
+.panel {
+-webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible {
+outline: 2px solid #d4af37;
+outline-offset: 3px;
+}
 </style>
 </head>
 <body>
