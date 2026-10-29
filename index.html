@@ -618,8 +618,10 @@ body.dark-theme .entry {
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import{getFirestore,collection,getDocs,addDoc,deleteDoc,doc,getDoc,setDoc}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import{getMessaging,getToken,onMessage}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-messaging.js";
 const firebaseConfig={apiKey:"AIzaSyDG3esUCYtU8jw_4jQGLW_ajzu5Rw4qYMw",authDomain:"takatrack-8c2ec.firebaseapp.com",projectId:"takatrack-8c2ec",storageBucket:"takatrack-8c2ec.firebasestorage.app",messagingSenderId:"116009412611",appId:"1:116009412611:web:982a5ba62a961573368636"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),KEY="takatrack_entries_v1",$=id=>document.getElementById(id);
+const messaging = getMessaging(app);
 function validEntry(e){return!!e&&typeof e==="object"&&["income","expense"].includes(e.type)&&Number.isFinite(Number(e.amount))&&Number(e.amount)>0&&typeof e.category==="string"&&typeof e.date==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(e.date)&&typeof(e.note??"")==="string"}
 function readLocal(){try{let d=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(d)?d.filter(validEntry):[]}catch{return[]}}
 let localEntries=readLocal(),entries=[...localEntries],currentUser=null,showBalance=true;
