@@ -1,6 +1,6 @@
 {
-  "name": "TakaTrack",
-  "short_name": "TakaTrack",
+  "name": "Money Tracker",
+"short_name": "Money Tracker",
   "description": "Free personal income and expense tracker",
   "start_url": "/takatrack/",
   "scope": "/takatrack/",
