@@ -1223,6 +1223,271 @@ themeButton.addEventListener('click', () => {
 document.body.appendChild(themeButton);
 applyTheme(localStorage.getItem('takatrack-theme') || 'light');
 $("enableNotificationsBtn").onclick = enableNotifications;
+// ===== পাওনা ও দেনা ট্যাব =====
+const receivableSection = $("receivablesPage");
+const receivablePanels = Array.from(receivableSection.querySelectorAll(":scope > .panel"));
+
+const debtTabs = document.createElement("div");
+debtTabs.className = "debt-tabs";
+debtTabs.innerHTML = `
+  <button type="button" class="active" id="receivableTabBtn">পাওনা</button>
+  <button type="button" id="debtTabBtn">দেনা</button>
+`;
+
+const receivableContent = document.createElement("div");
+receivableContent.id = "receivableTabContent";
+receivablePanels.forEach(panel => receivableContent.appendChild(panel));
+
+const debtContent = document.createElement("div");
+debtContent.id = "debtTabContent";
+debtContent.hidden = true;
+debtContent.innerHTML = `
+  <div class="panel">
+    <h2>দেনা হিসাব</h2>
+    <p class="muted">তোমার কাছ থেকে কার কত টাকা পাওনা, তার হিসাব রাখো।</p>
+    <form id="debtForm">
+      <label>ব্যক্তির নাম</label>
+      <input id="debtName" type="text" placeholder="নাম লিখো" required>
+      <label>মোবাইল নম্বর (ঐচ্ছিক)</label>
+      <input id="debtPhone" type="tel" placeholder="মোবাইল নম্বর">
+      <label>দেনার পরিমাণ</label>
+      <input id="debtAmount" type="number" min="1" step="0.01" placeholder="যেমন: 5000" required>
+      <label>তারিখ</label>
+      <input id="debtDate" type="date" required>
+      <label>কারণ বা বিবরণ (ঐচ্ছিক)</label>
+      <input id="debtNote" type="text" placeholder="কী কারণে টাকা ধার নিয়েছ">
+      <button type="submit">দেনা যোগ করো</button>
+    </form>
+  </div>
+  <div class="panel">
+    <h3>দেনার তালিকা</h3>
+    <div id="debtSummary"></div>
+    <div id="debtList"><p class="muted">এখনো কোনো দেনা যোগ করা হয়নি।</p></div>
+  </div>
+`;
+
+receivableSection.insertBefore(debtTabs, receivableSection.firstChild);
+receivableSection.append(receivableContent, debtContent);
+
+const debtTabStyle = document.createElement("style");
+debtTabStyle.textContent = `
+  .debt-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 18px}
+  .debt-tabs button{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--text);font-weight:700}
+  .debt-tabs button.active{background:var(--primary);color:white}
+`;
+document.head.appendChild(debtTabStyle);
+
+$("receivableTabBtn").onclick = () => {
+  receivableContent.hidden = false;
+  debtContent.hidden = true;
+  $("receivableTabBtn").classList.add("active");
+  $("debtTabBtn").classList.remove("active");
+};
+
+$("debtTabBtn").onclick = () => {
+  receivableContent.hidden = true;
+  debtContent.hidden = false;
+  $("debtTabBtn").classList.add("active");
+  $("receivableTabBtn").classList.remove("active");
+};
+
+$("debtDate").value = today();
+// ===== দেনার Firebase হিসাব =====
+let debts = [];
+
+function escapeDebtHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+async function loadDebts() {
+  if (!currentUser) return;
+
+  const ref = collection(db, "users", currentUser.uid, "debts");
+  const snap = await getDocs(ref);
+
+  debts = await Promise.all(snap.docs.map(async item => {
+    const paymentRef = collection(
+      db, "users", currentUser.uid,
+      "debts", item.id, "payments"
+    );
+
+    const paymentSnap = await getDocs(paymentRef);
+
+    return {
+      id: item.id,
+      ...item.data(),
+      payments: paymentSnap.docs.map(p => ({
+        id: p.id,
+        ...p.data()
+      }))
+    };
+  }));
+
+  renderDebts();
+}
+
+function renderDebts() {
+  const list = $("debtList");
+  const summary = $("debtSummary");
+
+  if (!list || !summary) return;
+
+  const totalRemaining = debts.reduce(
+    (sum, item) => sum + Number(item.remainingAmount || 0), 0
+  );
+
+  summary.innerHTML = `
+    <p><strong>মোট বাকি দেনা: ৳${totalRemaining.toFixed(2)}</strong></p>
+  `;
+
+  if (!debts.length) {
+    list.innerHTML = '<p class="muted">এখনো কোনো দেনা যোগ করা হয়নি।</p>';
+    return;
+  }
+
+  list.innerHTML = debts.map(item => `
+    <div class="panel">
+      <h3>${escapeDebtHTML(item.name)}</h3>
+      <p>মূল দেনা: ৳${Number(item.originalAmount || 0).toFixed(2)}</p>
+      <p>পরিশোধ: ৳${Number(item.totalPaid || 0).toFixed(2)}</p>
+      <p><strong>এখনো বাকি: ৳${Number(item.remainingAmount || 0).toFixed(2)}</strong></p>
+      <p>তারিখ: ${escapeDebtHTML(item.date || "")}</p>
+      ${item.phone ? `<p>মোবাইল: ${escapeDebtHTML(item.phone)}</p>` : ""}
+      ${item.note ? `<p>বিবরণ: ${escapeDebtHTML(item.note)}</p>` : ""}
+      <h4>পরিশোধের ইতিহাস</h4>
+      ${
+        item.payments?.length
+          ? item.payments.map(p => `
+              <p>৳${Number(p.amount).toFixed(2)} — ${escapeDebtHTML(p.date)}</p>
+            `).join("")
+          : '<p class="muted">এখনো কোনো টাকা পরিশোধ করা হয়নি।</p>'
+      }
+      ${
+        Number(item.remainingAmount) > 0
+          ? `
+            <button type="button" onclick="recordDebtPayment('${item.id}', true)">
+              সম্পূর্ণ টাকা পরিশোধ করেছি
+            </button>
+            <button type="button" onclick="recordDebtPayment('${item.id}', false)">
+              আংশিক টাকা পরিশোধ করেছি
+            </button>
+          `
+          : '<p>✅ সম্পূর্ণ দেনা পরিশোধ হয়েছে</p>'
+      }
+    </div>
+  `).join("");
+}
+
+$("debtForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  if (!currentUser) {
+    alert("আগে লগইন করো।");
+    return;
+  }
+
+  const amount = Number($("debtAmount").value);
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    alert("সঠিক টাকার পরিমাণ লিখো।");
+    return;
+  }
+
+  try {
+    await addDoc(
+      collection(db, "users", currentUser.uid, "debts"),
+      {
+        name: $("debtName").value.trim(),
+        phone: $("debtPhone").value.trim(),
+        originalAmount: amount,
+        totalPaid: 0,
+        remainingAmount: amount,
+        date: $("debtDate").value,
+        note: $("debtNote").value.trim(),
+        status: "দেনা বাকি",
+        createdAt: Date.now()
+      }
+    );
+
+    $("debtForm").reset();
+    $("debtDate").value = today();
+
+    await loadDebts();
+    alert("দেনা সফলভাবে যোগ হয়েছে!");
+  } catch (error) {
+    console.error(error);
+    alert("দেনা যোগ করা যায়নি। আবার চেষ্টা করো।");
+  }
+});
+
+window.recordDebtPayment = async function(id, full) {
+  const item = debts.find(d => d.id === id);
+  if (!item || !currentUser) return;
+
+  const remaining = Number(item.remainingAmount || 0);
+  let amount = remaining;
+
+  if (!full) {
+    const input = prompt("কত টাকা পরিশোধ করেছ?");
+    if (input === null) return;
+
+    amount = Number(input);
+
+    if (!Number.isFinite(amount) || amount <= 0 || amount > remaining) {
+      alert("সঠিক পরিমাণ লিখো। বাকি টাকার বেশি দেওয়া যাবে না।");
+      return;
+    }
+  }
+
+  try {
+    await addDoc(
+      collection(db, "users", currentUser.uid, "debts", id, "payments"),
+      {
+        amount,
+        date: today(),
+        createdAt: Date.now()
+      }
+    );
+
+    const newPaid = Number(item.totalPaid || 0) + amount;
+    const newRemaining = Math.max(0, remaining - amount);
+
+    await updateDoc(
+      doc(db, "users", currentUser.uid, "debts", id),
+      {
+        totalPaid: newPaid,
+        remainingAmount: newRemaining,
+        status: newRemaining === 0 ? "পরিশোধ সম্পূর্ণ" : "আংশিক পরিশোধ"
+      }
+    );
+
+    await loadDebts();
+    alert("পরিশোধের হিসাব সংরক্ষণ হয়েছে!");
+  } catch (error) {
+    console.error(error);
+    alert("হিসাব সংরক্ষণ করা যায়নি।");
+  }
+};
+
+// লগইন হলে দেনার তালিকা লোড হবে
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    try {
+      await loadDebts();
+    } catch (error) {
+      console.error("Debt loading error:", error);
+    }
+  } else {
+    debts = [];
+    renderDebts();
+  }
+});
 </script>
  <script>
 if ("serviceWorker" in navigator) {
