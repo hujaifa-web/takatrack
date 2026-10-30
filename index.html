@@ -541,7 +541,7 @@ body.dark-theme .entry {
 <header><div class="top"><div class="brand"><div class="logo">৳</div><div><h1>Money Tracker</h1><p>আপনার টাকা, আপনার হিসাব</p></div></div><div class="avatar" id="profileChip">T</div></div></header>
 <main>
 <section class="section" id="homePage">
- <div class="balance"><div class="row"><span class="muted">💳 &nbsp; বর্তমান ব্যালেন্স</span><button class="eye" id="toggleBalance" type="button">◉</button></div><div class="big" id="balance">৳০</div><div class="row"><span class="muted">আপনার হিসাবের সারসংক্ষেপ</span><span class="pill">আয় − খরচ</span></div></div>
+ <div class="balance"><div class="row"><span class="muted"> &nbsp; বর্তমান ব্যালেন্স</span><button class="eye" id="toggleBalance" type="button">◉</button></div><div class="big" id="balance">৳০</div><div class="row"><span class="muted">আপনার হিসাবের সারসংক্ষেপ</span><span class="pill">আয় − খরচ</span></div></div>
  <div class="grid"><div class="card"><div class="ico">↗</div><div class="label">মোট আয়</div><div class="val income" id="totalIncome">৳০</div></div><div class="card"><div class="ico red">↙</div><div class="label">মোট খরচ</div><div class="val expense" id="totalExpense">৳০</div></div></div>
  <div class="heading"><h2>দ্রুত যোগ করুন</h2><span>এক ট্যাপে শুরু</span></div><div class="quick"><button id="quickIncome"><b>＋</b>আয় যোগ</button><button id="quickExpense"><b class="redb">−</b>খরচ যোগ</button><button id="quickReport"><b class="blueb">▥</b>রিপোর্ট</button></div>
  <div class="heading">
@@ -771,7 +771,71 @@ async function loadReceivables() {
 
   renderReceivables();
 }
+async function editReceivable(r) {
+  const name = prompt("ব্যক্তির নাম:", r.name);
+  if (name === null) return;
 
+  const amountInput = prompt("মূল পাওনার পরিমাণ:", r.originalAmount);
+  if (amountInput === null) return;
+
+  const amount = Number(amountInput);
+  const paid = Number(r.totalPaid || 0);
+
+  if (!name.trim() || !Number.isFinite(amount) || amount <= 0 || amount < paid) {
+    alert("সঠিক নাম ও টাকার পরিমাণ দাও। মোট জমার চেয়ে কম করা যাবে না।");
+    return;
+  }
+
+  const phone = prompt("মোবাইল নম্বর:", r.phone || "");
+  if (phone === null) return;
+
+  const note = prompt("বিবরণ:", r.note || "");
+  if (note === null) return;
+
+  try {
+    await updateDoc(
+      doc(db, "users", currentUser.uid, "receivables", r.id),
+      {
+        name: name.trim(),
+        originalAmount: amount,
+        remainingAmount: amount - paid,
+        phone: phone.trim(),
+        note: note.trim()
+      }
+    );
+
+    await loadReceivables();
+    alert("পাওনার তথ্য আপডেট হয়েছে!");
+  } catch (error) {
+    alert("আপডেট করা যায়নি: " + error.message);
+  }
+}
+
+async function deleteReceivable(r) {
+  if (!confirm("এই পাওনার হিসাব ও পেমেন্টের ইতিহাস মুছে ফেলতে চাও?")) return;
+
+  try {
+    const paymentRef = collection(
+      db, "users", currentUser.uid,
+      "receivables", r.id, "payments"
+    );
+
+    const payments = await getDocs(paymentRef);
+
+    for (const payment of payments.docs) {
+      await deleteDoc(payment.ref);
+    }
+
+    await deleteDoc(
+      doc(db, "users", currentUser.uid, "receivables", r.id)
+    );
+
+    await loadReceivables();
+    alert("পাওনার হিসাব মুছে ফেলা হয়েছে!");
+  } catch (error) {
+    alert("মুছতে সমস্যা হয়েছে: " + error.message);
+  }
+}
 function renderReceivables() {
   const list = $("receivableList");
   const summary = $("receivableSummary");
@@ -831,7 +895,17 @@ function renderReceivables() {
       line.textContent = p.date + " — " + money(p.amount);
       card.append(line);
     });
+    const editBtn = document.createElement("button");
+    editBtn.className = "secondary";
+    editBtn.textContent = "এডিট";
+    editBtn.onclick = () => editReceivable(r);
 
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "danger";
+    deleteBtn.textContent = "ডিলিট";
+    deleteBtn.onclick = () => deleteReceivable(r);
+
+    card.append(editBtn, deleteBtn);
     if (Number(r.remainingAmount) > 0) {
       const fullBtn = document.createElement("button");
       fullBtn.className = "primary";
@@ -848,7 +922,7 @@ function renderReceivables() {
       card.append(fullBtn, partialBtn);
     } else {
       const done = document.createElement("p");
-      done.textContent = "✅ সম্পূর্ণ টাকা পরিশোধ হয়েছে";
+      done.textContent = " সম্পূর্ণ টাকা পরিশোধ হয়েছে";
       card.append(done);
     }
 
@@ -1331,7 +1405,74 @@ async function loadDebts() {
 
   renderDebts();
 }
+window.editDebt = async function(id) {
+  const item = debts.find(d => d.id === id);
+  if (!item) return;
 
+  const name = prompt("ব্যক্তির নাম:", item.name);
+  if (name === null) return;
+
+  const amountInput = prompt("মূল দেনার পরিমাণ:", item.originalAmount);
+  if (amountInput === null) return;
+
+  const amount = Number(amountInput);
+  const paid = Number(item.totalPaid || 0);
+
+  if (!name.trim() || !Number.isFinite(amount) || amount <= 0 || amount < paid) {
+    alert("সঠিক নাম ও টাকার পরিমাণ দাও। মোট পরিশোধের চেয়ে কম করা যাবে না।");
+    return;
+  }
+
+  const phone = prompt("মোবাইল নম্বর:", item.phone || "");
+  if (phone === null) return;
+
+  const note = prompt("বিবরণ:", item.note || "");
+  if (note === null) return;
+
+  try {
+    await updateDoc(
+      doc(db, "users", currentUser.uid, "debts", id),
+      {
+        name: name.trim(),
+        originalAmount: amount,
+        remainingAmount: amount - paid,
+        phone: phone.trim(),
+        note: note.trim()
+      }
+    );
+
+    await loadDebts();
+    alert("দেনার তথ্য আপডেট হয়েছে!");
+  } catch (error) {
+    alert("আপডেট করা যায়নি: " + error.message);
+  }
+};
+
+window.deleteDebt = async function(id) {
+  if (!confirm("এই দেনার হিসাব ও পেমেন্টের ইতিহাস মুছে ফেলতে চাও?")) return;
+
+  try {
+    const paymentRef = collection(
+      db, "users", currentUser.uid,
+      "debts", id, "payments"
+    );
+
+    const payments = await getDocs(paymentRef);
+
+    for (const payment of payments.docs) {
+      await deleteDoc(payment.ref);
+    }
+
+    await deleteDoc(
+      doc(db, "users", currentUser.uid, "debts", id)
+    );
+
+    await loadDebts();
+    alert("দেনার হিসাব মুছে ফেলা হয়েছে!");
+  } catch (error) {
+    alert("মুছতে সমস্যা হয়েছে: " + error.message);
+  }
+};
 function renderDebts() {
   const list = $("debtList");
   const summary = $("debtSummary");
@@ -1368,6 +1509,13 @@ function renderDebts() {
             `).join("")
           : '<p class="muted">এখনো কোনো টাকা পরিশোধ করা হয়নি।</p>'
       }
+            <button type="button" onclick="editDebt('${item.id}')">
+         এডিট
+      </button>
+
+      <button type="button" onclick="deleteDebt('${item.id}')">
+         ডিলিট
+      </button>
       ${
         Number(item.remainingAmount) > 0
           ? `
@@ -1378,7 +1526,7 @@ function renderDebts() {
               আংশিক টাকা পরিশোধ করেছি
             </button>
           `
-          : '<p>✅ সম্পূর্ণ দেনা পরিশোধ হয়েছে</p>'
+          : '<p> সম্পূর্ণ দেনা পরিশোধ হয়েছে</p>'
       }
     </div>
   `).join("");
