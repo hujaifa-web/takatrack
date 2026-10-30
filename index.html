@@ -3,7 +3,7 @@
 <head>
  <link rel="manifest" href="manifest.json">
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#087f5b"><title>TakaTrack — Smart Money Tracker</title>
+<meta name="theme-color" content="#087f5b"><title>Money Tracker — Manage Your Money</title>
 <style>
 :root{--g:#087f5b;--gd:#064e3b;--bg:#f4f7f5;--ink:#142b23;--mut:#718078;--red:#d94b4b;--line:#e1e9e3;--shadow:0 12px 32px #123d2b12}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;padding-bottom:88px}button,input,select{font:inherit}button{cursor:pointer}
@@ -174,7 +174,7 @@ button:focus-visible {
 outline: 2px solid #d4af37;
 outline-offset: 3px;
 }
- /* TakaTrack Theme Settings */
+ /* Money Tracker Theme Settings */
 :root {
   color-scheme: light;
   --page-bg: #f4f7f5;
@@ -451,7 +451,7 @@ body.dark-theme .category-info {
   border-radius: 8px;
   white-space: nowrap;
 }
- /* TakaTrack — Dashboard Design Upgrade */
+ /* Money Tracker — Dashboard Design Upgrade */
 .card,
 .panel,
 .balance,
@@ -538,14 +538,14 @@ body.dark-theme .entry {
 </style>
 </head>
 <body>
-<header><div class="top"><div class="brand"><div class="logo">৳</div><div><h1>TakaTrack</h1><p>আপনার টাকা, আপনার হিসাব</p></div></div><div class="avatar" id="profileChip">T</div></div></header>
+<header><div class="top"><div class="brand"><div class="logo">৳</div><div><h1>Money Tracker</h1><p>আপনার টাকা, আপনার হিসাব</p></div></div><div class="avatar" id="profileChip">T</div></div></header>
 <main>
 <section class="section" id="homePage">
  <div class="balance"><div class="row"><span class="muted">💳 &nbsp; বর্তমান ব্যালেন্স</span><button class="eye" id="toggleBalance" type="button">◉</button></div><div class="big" id="balance">৳০</div><div class="row"><span class="muted">আপনার হিসাবের সারসংক্ষেপ</span><span class="pill">আয় − খরচ</span></div></div>
  <div class="grid"><div class="card"><div class="ico">↗</div><div class="label">মোট আয়</div><div class="val income" id="totalIncome">৳০</div></div><div class="card"><div class="ico red">↙</div><div class="label">মোট খরচ</div><div class="val expense" id="totalExpense">৳০</div></div></div>
  <div class="heading"><h2>দ্রুত যোগ করুন</h2><span>এক ট্যাপে শুরু</span></div><div class="quick"><button id="quickIncome"><b>＋</b>আয় যোগ</button><button id="quickExpense"><b class="redb">−</b>খরচ যোগ</button><button id="quickReport"><b class="blueb">▥</b>রিপোর্ট</button></div>
  <div class="heading">
-  <h2>🎯 মাসিক বাজেট</h2>
+  <h2> মাসিক বাজেট</h2>
   <span id="budgetMonth"></span>
 </div>
 
@@ -583,7 +583,7 @@ body.dark-theme .entry {
  <div class="heading"><h2>মাসিক ওভারভিউ</h2><span id="chartMonthLabel">শেষ ৬ মাস</span></div>
  <section class="panel"><div class="row chart-head"><strong>আয় বনাম খরচ</strong><select id="chartPeriod"><option value="6">শেষ ৬ মাস</option><option value="12">শেষ ১২ মাস</option></select></div><div class="legend"><span><i class="dot" style="background:#0a9b6b"></i>আয়</span><span><i class="dot" style="background:#f07878"></i>খরচ</span></div><div class="chart" id="chart"></div><div class="labels" id="chartLabels"></div><p class="hint" id="chartNote">লেনদেন যোগ হলে এখানে চার্ট দেখা যাবে।</p></section>
  <div class="heading">
-  <h2>📅 মাসিক খরচের তুলনা</h2>
+  <h2> মাসিক খরচের তুলনা</h2>
   <span>এই মাস বনাম গত মাস</span>
 </div>
 
@@ -603,7 +603,7 @@ body.dark-theme .entry {
   </p>
 </section>
  <div class="heading">
-  <h2>📊 খরচের ক্যাটাগরি</h2>
+  <h2> খরচের ক্যাটাগরি</h2>
   <span>এই মাসের হিসাব</span>
 </div>
 
@@ -619,7 +619,7 @@ body.dark-theme .entry {
 <section class="section" id="profilePage" hidden><div class="heading"><h2>👤 প্রোফাইল ও সেটিংস</h2></div><section class="panel" id="authPanel"><h2 style="font-size:17px;margin-top:0">🔐 অ্যাকাউন্ট / লগইন</h2><p class="hint">নিজের অনলাইন হিসাব দেখতে ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন। নতুন হলে অ্যাকাউন্ট তৈরি করুন।</p><label for="email">ইমেইল</label><input id="email" type="email" autocomplete="email" placeholder="name@example.com"><label for="password">পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)</label><input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="পাসওয়ার্ড"><div class="auth-grid"><button class="primary" type="button" id="registerBtn">নতুন অ্যাকাউন্ট</button><button class="secondary" type="button" id="loginBtn">লগইন</button></div><button class="secondary" type="button" id="logoutBtn" hidden>লগআউট</button><p class="hint" id="authStatus" role="status">এখন এই ব্রাউজারের স্থানীয় হিসাব দেখানো হচ্ছে।</p><button class="secondary" type="button" id="migrateBtn" hidden>এই ডিভাইসের পুরোনো হিসাব অ্যাকাউন্টে যোগ করুন</button></section><section class="panel"><h2 style="font-size:17px;margin-top:0">💾 আপনার ডেটা</h2><p class="hint">নিয়মিত Backup রাখুন। লগইন থাকলে হিসাব Firebase অ্যাকাউন্টে সংরক্ষিত হয়।</p><button class="primary" id="exportBtn" type="button">Backup ডাউনলোড করুন</button><button class="primary" id="enableNotificationsBtn" type="button">🔔 Notification চালু করুন</button><label for="importFile">Backup থেকে হিসাব যোগ করুন</label><input id="importFile" type="file" accept=".json"><button class="secondary" id="installBtn" type="button" hidden>📱 অ্যাপ ইনস্টল করুন</button></section></section>
 <section class="panel" id="entryPanel" hidden><h2 id="formHeading" style="font-size:18px;margin:0">➕ নতুন হিসাব যোগ করুন</h2><p class="hint">আপনার আয় বা খরচের তথ্য দিন।</p><form id="entryForm"><label for="type">হিসাবের ধরন</label><select id="type" required><option value="income">আয় (Income)</option><option value="expense">খরচ (Expense)</option></select><label for="amount">টাকার পরিমাণ (৳)</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="যেমন: 500" required><label for="category">ক্যাটাগরি</label><select id="category" required><option>বেতন</option><option>ব্যবসা</option><option>অন্যান্য আয়</option><option>খাবার</option><option>যাতায়াত</option><option>বাসা ভাড়া</option><option>কেনাকাটা</option><option>চিকিৎসা</option><option>পড়াশোনা</option><option>দান-সদকা</option><option>অন্যান্য খরচ</option></select><div class="filter-grid"><div><label for="date">তারিখ</label><input id="date" type="date" required></div><div><label for="note">নোট (ঐচ্ছিক)</label><input id="note" type="text" maxlength="150" placeholder="কিসের হিসাব?"></div></div><button class="primary" id="saveEntryBtn" type="submit">হিসাব সংরক্ষণ করুন</button><button class="secondary" id="cancelEntryBtn" type="button">বাতিল</button></form></section>
 </main>
-<nav class="nav" aria-label="প্রধান মেনু"><button class="active" data-page="homePage"><span class="ni">⌂</span>হোম</button><button data-page="transactionsPage"><span class="ni">▤</span>লেনদেন</button><button data-page="reportsPage"><span class="ni">▥</span>রিপোর্ট</button><button data-page="profilePage"><span class="ni">♙</span>প্রোফাইল</button></nav><footer>TakaTrack © 2026 · সহজ হিসাব, সুন্দর ভবিষ্যৎ 💚</footer>
+<nav class="nav" aria-label="প্রধান মেনু"><button class="active" data-page="homePage"><span class="ni">⌂</span>হোম</button><button data-page="transactionsPage"><span class="ni">▤</span>লেনদেন</button><button data-page="reportsPage"><span class="ni">▥</span>রিপোর্ট</button><button data-page="profilePage"><span class="ni">♙</span>প্রোফাইল</button></nav><footer>Money Tracker © 2026 · সহজ হিসাব, সুন্দর ভবিষ্যৎ </footer>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import{getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
@@ -757,10 +757,10 @@ function renderMonthlyCompare() {
     message = "গত মাসে খরচ ছিল না। এই মাসের খরচ " +
       money(currentExpense) + "।";
   } else if (currentExpense > previousExpense) {
-    message = "⚠️ গত মাসের তুলনায় খরচ বেড়েছে " +
+    message = " গত মাসের তুলনায় খরচ বেড়েছে " +
       money(currentExpense - previousExpense) + "।";
   } else if (currentExpense < previousExpense) {
-    message = "💚 গত মাসের তুলনায় খরচ কমেছে " +
+    message = " গত মাসের তুলনায় খরচ কমেছে " +
       money(previousExpense - currentExpense) + "।";
   } else {
     message = "গত মাস ও এই মাসের খরচ সমান।";
@@ -847,7 +847,7 @@ container.append(item);
   $("budgetRemaining").textContent = money(remaining);
   $("budgetPercent").textContent =
   percent >= 100
-    ? percent + "% · বাজেট ছাড়িয়েছে ⚠️"
+    ? percent + "% · বাজেট ছাড়িয়েছে "
     : percent + "% ব্যবহৃত";
 
   $("budgetProgress").style.width =
@@ -859,9 +859,9 @@ container.append(item);
 
   $("budgetMessage").textContent =
     budget <= 0 ? "তোমার মাসিক বাজেট নির্ধারণ করো।" :
-    remaining < 0 ? "⚠️ বাজেটের চেয়ে " + money(-remaining) + " বেশি খরচ হয়েছে!" :
-    percent >= 80 ? "⚠️ সতর্ক থাকো! বাজেটের বেশিরভাগ খরচ হয়ে গেছে।" :
-    "💚 বাজেটের মধ্যে আছো। আরও বাকি " + money(remaining) + "।";
+    remaining < 0 ? " বাজেটের চেয়ে " + money(-remaining) + " বেশি খরচ হয়েছে!" :
+    percent >= 80 ? " সতর্ক থাকো! বাজেটের বেশিরভাগ খরচ হয়ে গেছে।" :
+    " বাজেটের মধ্যে আছো। আরও বাকি " + money(remaining) + "।";
 }
 function render(){let t=totals(entries);$("totalIncome").textContent=money(t.income);$("totalExpense").textContent=money(t.expense);$("balance").textContent=showBalance?money(t.income-t.expense):"৳ ••••••";$("reportIncome").textContent=money(t.income);$("reportExpense").textContent=money(t.expense);$("reportBalance").textContent=money(t.income-t.expense);let mt=totals(entries.filter(e=>e.date.startsWith(today().slice(0,7))));$("thisMonthSummary").textContent="এই মাসে আয় "+money(mt.income)+" · খরচ "+money(mt.expense)+" · অবশিষ্ট "+money(mt.income-mt.expense);let f=$("filter").value,m=$("monthFilter").value,sorted=entries.slice().sort((a,b)=>b.date.localeCompare(a.date)),shown=sorted.filter(e=>(f==="all"||e.type===f)&&(!m||e.date.startsWith(m)));$("entries").replaceChildren();$("transactionCount").textContent=shown.length.toLocaleString("bn-BD")+"টি";if(!shown.length){let p=document.createElement("div");p.className="empty";p.textContent="এখনো কোনো হিসাব নেই।";$("entries").append(p)}else shown.forEach(e=>$("entries").append(makeEntry(e)));$("recentEntries").replaceChildren();let recent=sorted.slice(0,5);if(!recent.length){let p=document.createElement("div");p.className="panel empty";p.textContent="স্বাগতম! প্রথম আয় বা খরচ যোগ করলে এখানে দেখা যাবে।";$("recentEntries").append(p)}else recent.forEach(e=>$("recentEntries").append(makeEntry(e)));renderBudget();renderBudget();renderMonthlyCompare();renderChart();renderCategoryChart()}
  $("saveBudgetBtn").onclick = async () => {
@@ -904,12 +904,12 @@ function render(){let t=totals(entries);$("totalIncome").textContent=money(t.inc
 };
 $("toggleBalance").onclick=()=>{showBalance=!showBalance;$("toggleBalance").textContent=showBalance?"◉":"◎";render()};$("chartPeriod").onchange=renderChart;$("filter").onchange=render;$("monthFilter").onchange=render;
 $("entryForm").onsubmit=async ev=>{ev.preventDefault();let amount=Number($("amount").value),date=$("date").value;if(!Number.isFinite(amount)||amount<=0||!date){alert("সঠিক টাকার পরিমাণ ও তারিখ দিন।");return}let e={type:$("type").value,amount,category:$("category").value,date,note:$("note").value.trim()},btn=$("saveEntryBtn");btn.disabled=true;try{if(currentUser)entries.push(await saveEntryToCloud(e));else{e.id=Date.now().toString()+Math.random().toString(36).slice(2);entries.push(e);try{localStorage.setItem(KEY,JSON.stringify(entries));localEntries=[...entries]}catch{entries.pop();throw Error("ডেটা সংরক্ষণ করা যায়নি। Backup রাখুন।")}}$("amount").value="";$("note").value="";render();alert(currentUser?"হিসাব অনলাইনে সংরক্ষণ হয়েছে!":"হিসাব এই ব্রাউজারে সংরক্ষণ হয়েছে। অনলাইনে রাখতে লগইন করুন।");closeForm()}catch(err){alert("হিসাব সংরক্ষণ হয়নি: "+friendlyError(err))}finally{btn.disabled=false}};
-$("exportBtn").onclick=()=>{let blob=new Blob([JSON.stringify(entries.map(({id,...e})=>({id,...e})),null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="takatrack-backup-"+today()+".json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+$("exportBtn").onclick=()=>{let blob=new Blob([JSON.stringify(entries.map(({id,...e})=>({id,...e})),null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="money-tracker-backup-"+today()+".json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 $("importFile").onchange=async ev=>{let file=ev.target.files[0];if(!file)return;try{if(file.size>5*1024*1024)throw Error("ফাইলটি অনেক বড়।");let data=JSON.parse(await file.text());if(!Array.isArray(data)||data.length>10000||!data.every(validEntry))throw Error("Backup ফাইল সঠিক নয়।");if(!confirm("Backup-এর "+data.length+"টি হিসাব বর্তমান হিসাবের সঙ্গে যোগ হবে। এগোবেন?"))return;if(currentUser){for(let e of data)await saveEntryToCloud(e);await refreshCloud()}else{entries=[...entries,...data.map(e=>({...e,id:typeof e.id==="string"?e.id:Date.now().toString()+Math.random().toString(36).slice(2)}))];localStorage.setItem(KEY,JSON.stringify(entries));localEntries=[...entries];render()}alert("Backup-এর হিসাব যোগ করা হয়েছে!")}catch(err){alert("Backup যোগ করা যায়নি: "+friendlyError(err))}finally{ev.target.value=""}};
 $("migrateBtn").onclick=async()=>{if(!currentUser)return;if(!localEntries.length){alert("এই ব্রাউজারে পুরোনো হিসাব পাওয়া যায়নি।");return}if(!confirm("এই ব্রাউজারে থাকা "+localEntries.length+"টি পুরোনো হিসাব "+currentUser.email+" অ্যাকাউন্টে যোগ হবে। এগুলো কি এই অ্যাকাউন্টেরই হিসাব?"))return;$("migrateBtn").disabled=true;try{for(let e of localEntries)await saveEntryToCloud(e);await refreshCloud();setStatus("পুরোনো হিসাব অ্যাকাউন্টে যোগ হয়েছে।");alert("পুরোনো হিসাব ক্লাউড অ্যাকাউন্টে যোগ হয়েছে!")}catch(err){alert("পুরোনো হিসাব যোগ করতে সমস্যা হয়েছে: "+friendlyError(err))}finally{$("migrateBtn").disabled=false}};
 let installPrompt;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPrompt=e;$("installBtn").hidden=false});$("installBtn").onclick=async()=>{if(!installPrompt){alert("Chrome-এর মেনু (⋮) থেকে 'Add to Home screen' বা 'Install app' নির্বাচন করুন।");return}installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$("installBtn").hidden=true};
 render();
- // TakaTrack Light / Dark Theme
+ // Money Tracker Light / Dark Theme
 const themeButton = document.createElement('button');
 themeButton.id = 'themeToggle';
 themeButton.type = 'button';
@@ -951,7 +951,7 @@ $("enableNotificationsBtn").onclick = enableNotifications;
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./service-worker.js")
-      .then(() => console.log("TakaTrack ready"))
+      .then(() => console.log("Money Tracker ready"))
       .catch((error) => console.error("Service Worker error:", error));
   });
 }
