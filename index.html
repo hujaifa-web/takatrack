@@ -541,6 +541,13 @@ body.dark-theme .entry {
 <header><div class="top"><div class="brand"><div class="logo">৳</div><div><h1>Money Tracker</h1><p>আপনার টাকা, আপনার হিসাব</p></div></div><div class="avatar" id="profileChip">T</div></div></header>
 <main>
 <section class="section" id="homePage">
+ <!-- Today's Date Card -->
+<div class="panel" id="todayDateCard">
+  <div class="muted" id="welcomeMessage">স্বাগতম!</div>
+  <div style="font-size:22px;font-weight:800;margin-top:8px"
+       id="todayDate">শনিবার, ৩১ অক্টোবর ২০২৬</div>
+  <div class="hint" id="todayGreeting">আল্লাহ আপনার দিনটি বরকতপূর্ণ করুন।</div>
+</div>
  <div class="balance"><div class="row"><span class="muted"> &nbsp; বর্তমান ব্যালেন্স</span><button class="eye" id="toggleBalance" type="button">◉</button></div><div class="big" id="balance">৳০</div><div class="row"><span class="muted">আপনার হিসাবের সারসংক্ষেপ</span><span class="pill">আয় − খরচ</span></div></div>
  <!-- আয় ও খরচ -->
 <div class="grid">
@@ -2154,6 +2161,21 @@ onAuthStateChanged(auth, async user => {
   `);
   w.document.close();
 });
+ function updateTodayDate() {
+  const now = new Date();
+
+  const dateText = new Intl.DateTimeFormat("bn-BD", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  }).format(now);
+
+  $("todayDate").textContent = dateText;
+  $("todayGreeting").textContent = "আজকের দিনটি সুন্দর হোক।";
+}
+
+updateTodayDate();
 </script>
  <script>
 if ("serviceWorker" in navigator) {
