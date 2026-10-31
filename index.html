@@ -542,9 +542,36 @@ body.dark-theme .entry {
 <main>
 <section class="section" id="homePage">
  <div class="balance"><div class="row"><span class="muted"> &nbsp; বর্তমান ব্যালেন্স</span><button class="eye" id="toggleBalance" type="button">◉</button></div><div class="big" id="balance">৳০</div><div class="row"><span class="muted">আপনার হিসাবের সারসংক্ষেপ</span><span class="pill">আয় − খরচ</span></div></div>
- <div class="grid"><div class="card"><div class="ico">↗</div><div class="label">মোট আয়</div><div class="val income" id="totalIncome">৳০</div></div><div class="card"><div class="ico red">↙</div><div class="label">মোট খরচ</div><div class="val expense" id="totalExpense">৳০</div></div></div><div class="val expense" id="totalExpense">৳০</div></div></div>
+ <!-- আয় ও খরচ -->
+<div class="grid">
+  <div class="card">
+    <div class="ico">↗</div>
+    <div class="label">মোট আয়</div>
+    <div class="val income" id="totalIncome">৳০</div>
+  </div>
 
-<!-- এখানে নতুন কোড বসবে -->
+  <div class="card">
+    <div class="ico red">↙</div>
+    <div class="label">মোট খরচ</div>
+    <div class="val expense" id="totalExpense">৳০</div>
+  </div>
+</div>
+
+<!-- পাওনা ও দেনা -->
+<div class="grid">
+  <div class="card">
+    <div class="ico"></div>
+    <div class="label">মোট পাওনা</div>
+    <div class="val income" id="dashboardReceivable">৳০</div>
+  </div>
+
+  <div class="card">
+    <div class="ico red"></div>
+    <div class="label">মোট দেনা</div>
+    <div class="val expense" id="dashboardDebt">৳০</div>
+  </div>
+</div>
+
  <div class="heading"><h2>দ্রুত যোগ করুন</h2><span>এক ট্যাপে শুরু</span></div><div class="quick"><button id="quickIncome"><b>＋</b>আয় যোগ</button><button id="quickExpense"><b class="redb">−</b>খরচ যোগ</button><button id="quickReport"><b class="blueb">▥</b>রিপোর্ট</button></div>
  <div class="heading">
   <h2> মাসিক বাজেট</h2>
