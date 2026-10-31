@@ -535,6 +535,48 @@ body.dark-theme .entry {
  body {
   overscroll-behavior-y: contain;
 }
+ /* Professional Profile Design */
+
+#profilePage .panel {
+  border-radius: 18px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+
+#profilePage .heading h2 {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+#profilePage button {
+  width: 100%;
+  min-height: 46px;
+  border-radius: 12px;
+  margin-top: 10px;
+  font-weight: 700;
+}
+
+#profilePage input {
+  border-radius: 11px;
+  min-height: 44px;
+}
+
+#profilePage .hint {
+  line-height: 1.7;
+}
+
+#profilePage #authStatus {
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(128,128,128,0.08);
+  margin-top: 14px;
+}
+
+#profilePage #logoutBtn {
+  margin-top: 12px;
+}b
 </style>
 </head>
 <body>
@@ -666,25 +708,134 @@ body.dark-theme .entry {
 
   <label>তারিখ</label>
   <input id="receivableDate" type="date" required>
+<section class="section" id="profilePage" hidden>
 
-  <label>কারণ বা বিবরণ (ঐচ্ছিক)</label>
-  <input id="receivableNote" type="text" placeholder="কী কারণে টাকা পাওনা">
-
-  <button type="submit">পাওনা যোগ করো</button>
-</form>
-
-  </div>  <div class="panel">
-    <h3> পাওনার তালিকা</h3>
-    <div id="receivableSummary"></div>
-    <div id="receivableList">
-      <p class="muted">এখনো কোনো পাওনা যোগ করা হয়নি।</p>
-    </div>
+  <div class="heading">
+    <h2>👤 আমার প্রোফাইল</h2>
   </div>
+
+  <!-- Profile Header -->
+  <div class="panel" style="text-align:center;padding:25px 18px;">
+
+    <div style="
+      width:76px;
+      height:76px;
+      border-radius:50%;
+      background:var(--primary);
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:32px;
+      font-weight:800;
+      margin:0 auto 12px;
+    ">♙</div>
+
+    <h2 style="margin:0;font-size:21px;">
+      আমার অ্যাকাউন্ট
+    </h2>
+
+    <p class="hint" style="margin-bottom:0;">
+      আপনার ব্যক্তিগত হিসাব ও সেটিংস
+    </p>
+
+  </div>
+
+  <!-- Account -->
+  <section class="panel" id="authPanel">
+
+    <h2 style="font-size:17px;margin-top:0;">
+      🔐 অ্যাকাউন্ট ও লগইন
+    </h2>
+
+    <p class="hint">
+      নিজের অনলাইন হিসাব দেখতে ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।
+    </p>
+
+    <label for="email">ইমেইল</label>
+    <input id="email" type="email"
+      autocomplete="email"
+      placeholder="name@example.com">
+
+    <label for="password">পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)</label>
+    <input id="password" type="password"
+      autocomplete="current-password"
+      minlength="6"
+      placeholder="পাসওয়ার্ড">
+
+    <div class="auth-grid">
+      <button class="primary" type="button" id="registerBtn">
+        নতুন অ্যাকাউন্ট
+      </button>
+
+      <button class="secondary" type="button" id="loginBtn">
+        লগইন
+      </button>
+    </div>
+
+    <button class="secondary" type="button"
+      id="logoutBtn" hidden>
+      🚪 লগআউট
+    </button>
+
+    <p class="hint" id="authStatus" role="status">
+      এখন এই ব্রাউজারের স্থানীয় হিসাব দেখানো হচ্ছে।
+    </p>
+
+    <button class="secondary" type="button"
+      id="migrateBtn" hidden>
+      এই ডিভাইসের পুরোনো হিসাব অ্যাকাউন্টে যোগ করুন
+    </button>
+
+  </section>
+
+  <!-- Data & Backup -->
+  <section class="panel">
+
+    <h2 style="font-size:17px;margin-top:0;">
+      💾 ডেটা ও ব্যাকআপ
+    </h2>
+
+    <p class="hint">
+      আপনার গুরুত্বপূর্ণ হিসাব নিরাপদ রাখতে নিয়মিত Backup রাখুন।
+    </p>
+
+    <button class="primary" id="exportBtn" type="button">
+      📥 Backup ডাউনলোড করুন
+    </button>
+
+    <label for="importFile">
+      Backup থেকে হিসাব যোগ করুন
+    </label>
+
+    <input id="importFile" type="file" accept=".json">
+
+  </section>
+
+  <!-- App Settings -->
+  <section class="panel">
+
+    <h2 style="font-size:17px;margin-top:0;">
+      ⚙️ অ্যাপ সেটিংস
+    </h2>
+
+    <p class="hint">
+      অ্যাপের সুবিধাগুলো প্রয়োজন অনুযায়ী চালু করুন।
+    </p>
+
+    <button class="secondary" type="button"
+      id="enableNotificationsBtn">
+      🔔 Notification চালু করুন
+    </button>
+
+    <button class="secondary" id="installBtn"
+      type="button" hidden>
+      📱 অ্যাপ ইনস্টল করুন
+    </button>
+
+  </section>
+
 </section>
-<section class="section" id="reportsPage" hidden><div class="heading"><h2> রিপোর্ট</h2><span>আর্থিক চিত্র</span></div><div class="grid"><div class="card"><div class="label">মোট আয়</div><div class="val income" id="reportIncome">৳০</div></div><div class="card"><div class="label">মোট খরচ</div><div class="val expense" id="reportExpense">৳০</div></div></div><div class="panel"><div class="label">মোট সঞ্চয় / অবশিষ্ট</div><div class="val" id="reportBalance">৳০</div><p class="hint">মোট আয় থেকে মোট খরচ বাদ দিয়ে হিসাব করা হয়েছে; এটি ব্যাংক ব্যালেন্স নয়।</p><div class="label">এই মাসের হিসাব</div><p class="hint" id="thisMonthSummary"></p><button class="primary" type="button" id="downloadPdfBtn">
-  📄 PDF রিপোর্ট ডাউনলোড
-</button></div></section>
-<section class="section" id="profilePage" hidden><div class="heading"><h2> প্রোফাইল ও সেটিংস</h2></div><section class="panel" id="authPanel"><h2 style="font-size:17px;margin-top:0"> অ্যাকাউন্ট / লগইন</h2><p class="hint">নিজের অনলাইন হিসাব দেখতে ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন। নতুন হলে অ্যাকাউন্ট তৈরি করুন।</p><label for="email">ইমেইল</label><input id="email" type="email" autocomplete="email" placeholder="name@example.com"><label for="password">পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)</label><input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="পাসওয়ার্ড"><div class="auth-grid"><button class="primary" type="button" id="registerBtn">নতুন অ্যাকাউন্ট</button><button class="secondary" type="button" id="loginBtn">লগইন</button></div><button class="secondary" type="button" id="logoutBtn" hidden>লগআউট</button><p class="hint" id="authStatus" role="status">এখন এই ব্রাউজারের স্থানীয় হিসাব দেখানো হচ্ছে।</p><button class="secondary" type="button" id="migrateBtn" hidden>এই ডিভাইসের পুরোনো হিসাব অ্যাকাউন্টে যোগ করুন</button></section><section class="panel"><h2 style="font-size:17px;margin-top:0">💾 আপনার ডেটা</h2><p class="hint">নিয়মিত Backup রাখুন। লগইন থাকলে হিসাব Firebase অ্যাকাউন্টে সংরক্ষিত হয়।</p><button class="primary" id="exportBtn" type="button">Backup ডাউনলোড করুন</button><button class="primary" id="enableNotificationsBtn" type="button">🔔 Notification চালু করুন</button><label for="importFile">Backup থেকে হিসাব যোগ করুন</label><input id="importFile" type="file" accept=".json"><button class="secondary" id="installBtn" type="button" hidden>📱 অ্যাপ ইনস্টল করুন</button></section></section>
 <section class="panel" id="entryPanel" hidden><h2 id="formHeading" style="font-size:18px;margin:0"> নতুন হিসাব যোগ করুন</h2><p class="hint">আপনার আয় বা খরচের তথ্য দিন।</p><form id="entryForm"><label for="type">হিসাবের ধরন</label><select id="type" required><option value="income">আয় (Income)</option><option value="expense">খরচ (Expense)</option></select><label for="amount">টাকার পরিমাণ (৳)</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="যেমন: 500" required><label for="category">ক্যাটাগরি</label><select id="category" required><option>বেতন</option><option>ব্যবসা</option><option>অন্যান্য আয়</option><option>খাবার</option><option>যাতায়াত</option><option>বাসা ভাড়া</option><option>কেনাকাটা</option><option>চিকিৎসা</option><option>পড়াশোনা</option><option>দান-সদকা</option><option>অন্যান্য খরচ</option></select><div class="filter-grid"><div><label for="date">তারিখ</label><input id="date" type="date" required></div><div><label for="note">নোট (ঐচ্ছিক)</label><input id="note" type="text" maxlength="150" placeholder="কিসের হিসাব?"></div></div><button class="primary" id="saveEntryBtn" type="submit">হিসাব সংরক্ষণ করুন</button><button class="secondary" id="cancelEntryBtn" type="button">বাতিল</button></form></section>
 </main>
 <nav class="nav" aria-label="প্রধান মেনু"><button class="active" data-page="homePage"><span class="ni">⌂</span>হোম</button><button data-page="transactionsPage"><span class="ni">▤</span>লেনদেন</button><button data-page="receivablesPage"><span class="ni">৳</span>পাওনা</button><button data-page="reportsPage"><span class="ni">▥</span>রিপোর্ট</button><button data-page="profilePage"><span class="ni">♙</span>প্রোফাইল</button></nav><footer>Money Tracker © 2026 · সহজ হিসাব, সুন্দর ভবিষ্যৎ </footer>
