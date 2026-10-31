@@ -1108,7 +1108,11 @@ $("registerBtn").onclick=async()=>{let email=$("email").value.trim(),password=$(
 $("loginBtn").onclick=async()=>{let email=$("email").value.trim(),password=$("password").value;if(!email||!password){setStatus("ইমেইল ও পাসওয়ার্ড লিখুন।");return}try{await signInWithEmailAndPassword(auth,email,password)}catch(e){setStatus(friendlyError(e))}};
 $("logoutBtn").onclick=async()=>{try{await signOut(auth)}catch(e){setStatus(friendlyError(e))}};
 onAuthStateChanged(auth,async user=>{currentUser=user;$("logoutBtn").hidden=!user;$("registerBtn").hidden=!!user;$("loginBtn").hidden=!!user;$("email").disabled=!!user;$("password").disabled=!!user;$("profileChip").textContent=user?(user.email||"T").charAt(0).toUpperCase():"T";if(user){setStatus("লগইন হয়েছে। ক্লাউড হিসাব লোড হচ্ছে…");await refreshCloud()}else{
-  entries=readLocal();
+ $("welcomeMessage").textContent = user
+  ? "আসসালামু আলাইকুম, " +
+    (user.displayName || user.email.split("@")[0]) + "!"
+  : "আসসালামু আলাইকুম!";
+ entries=readLocal();
   localEntries=[...entries];
   receivables=[];
   renderReceivables();
