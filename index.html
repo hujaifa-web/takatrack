@@ -674,7 +674,9 @@ body.dark-theme .entry {
     </div>
   </div>
 </section>
-<section class="section" id="reportsPage" hidden><div class="heading"><h2> রিপোর্ট</h2><span>আর্থিক চিত্র</span></div><div class="grid"><div class="card"><div class="label">মোট আয়</div><div class="val income" id="reportIncome">৳০</div></div><div class="card"><div class="label">মোট খরচ</div><div class="val expense" id="reportExpense">৳০</div></div></div><div class="panel"><div class="label">মোট সঞ্চয় / অবশিষ্ট</div><div class="val" id="reportBalance">৳০</div><p class="hint">মোট আয় থেকে মোট খরচ বাদ দিয়ে হিসাব করা হয়েছে; এটি ব্যাংক ব্যালেন্স নয়।</p><div class="label">এই মাসের হিসাব</div><p class="hint" id="thisMonthSummary"></p></div></section>
+<section class="section" id="reportsPage" hidden><div class="heading"><h2> রিপোর্ট</h2><span>আর্থিক চিত্র</span></div><div class="grid"><div class="card"><div class="label">মোট আয়</div><div class="val income" id="reportIncome">৳০</div></div><div class="card"><div class="label">মোট খরচ</div><div class="val expense" id="reportExpense">৳০</div></div></div><div class="panel"><div class="label">মোট সঞ্চয় / অবশিষ্ট</div><div class="val" id="reportBalance">৳০</div><p class="hint">মোট আয় থেকে মোট খরচ বাদ দিয়ে হিসাব করা হয়েছে; এটি ব্যাংক ব্যালেন্স নয়।</p><div class="label">এই মাসের হিসাব</div><p class="hint" id="thisMonthSummary"></p><button class="primary" type="button" id="downloadPdfBtn">
+  📄 PDF রিপোর্ট ডাউনলোড
+</button></div></section>
 <section class="section" id="profilePage" hidden><div class="heading"><h2> প্রোফাইল ও সেটিংস</h2></div><section class="panel" id="authPanel"><h2 style="font-size:17px;margin-top:0"> অ্যাকাউন্ট / লগইন</h2><p class="hint">নিজের অনলাইন হিসাব দেখতে ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন। নতুন হলে অ্যাকাউন্ট তৈরি করুন।</p><label for="email">ইমেইল</label><input id="email" type="email" autocomplete="email" placeholder="name@example.com"><label for="password">পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)</label><input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="পাসওয়ার্ড"><div class="auth-grid"><button class="primary" type="button" id="registerBtn">নতুন অ্যাকাউন্ট</button><button class="secondary" type="button" id="loginBtn">লগইন</button></div><button class="secondary" type="button" id="logoutBtn" hidden>লগআউট</button><p class="hint" id="authStatus" role="status">এখন এই ব্রাউজারের স্থানীয় হিসাব দেখানো হচ্ছে।</p><button class="secondary" type="button" id="migrateBtn" hidden>এই ডিভাইসের পুরোনো হিসাব অ্যাকাউন্টে যোগ করুন</button></section><section class="panel"><h2 style="font-size:17px;margin-top:0">💾 আপনার ডেটা</h2><p class="hint">নিয়মিত Backup রাখুন। লগইন থাকলে হিসাব Firebase অ্যাকাউন্টে সংরক্ষিত হয়।</p><button class="primary" id="exportBtn" type="button">Backup ডাউনলোড করুন</button><button class="primary" id="enableNotificationsBtn" type="button">🔔 Notification চালু করুন</button><label for="importFile">Backup থেকে হিসাব যোগ করুন</label><input id="importFile" type="file" accept=".json"><button class="secondary" id="installBtn" type="button" hidden>📱 অ্যাপ ইনস্টল করুন</button></section></section>
 <section class="panel" id="entryPanel" hidden><h2 id="formHeading" style="font-size:18px;margin:0"> নতুন হিসাব যোগ করুন</h2><p class="hint">আপনার আয় বা খরচের তথ্য দিন।</p><form id="entryForm"><label for="type">হিসাবের ধরন</label><select id="type" required><option value="income">আয় (Income)</option><option value="expense">খরচ (Expense)</option></select><label for="amount">টাকার পরিমাণ (৳)</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="যেমন: 500" required><label for="category">ক্যাটাগরি</label><select id="category" required><option>বেতন</option><option>ব্যবসা</option><option>অন্যান্য আয়</option><option>খাবার</option><option>যাতায়াত</option><option>বাসা ভাড়া</option><option>কেনাকাটা</option><option>চিকিৎসা</option><option>পড়াশোনা</option><option>দান-সদকা</option><option>অন্যান্য খরচ</option></select><div class="filter-grid"><div><label for="date">তারিখ</label><input id="date" type="date" required></div><div><label for="note">নোট (ঐচ্ছিক)</label><input id="note" type="text" maxlength="150" placeholder="কিসের হিসাব?"></div></div><button class="primary" id="saveEntryBtn" type="submit">হিসাব সংরক্ষণ করুন</button><button class="secondary" id="cancelEntryBtn" type="button">বাতিল</button></form></section>
 </main>
@@ -1973,6 +1975,184 @@ onAuthStateChanged(auth, async user => {
     debts = [];
     renderDebts();
   }
+});
+ $("downloadPdfBtn").addEventListener("click", () => {
+  const w = window.open("", "_blank");
+
+  if (!w) {
+    alert("পপ-আপ ব্লক হয়েছে। ব্রাউজারের পপ-আপ অনুমতি চালু করো।");
+    return;
+  }
+
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[ch]));
+
+  const total = totals(entries);
+  const budgetData = JSON.parse(localStorage.getItem(BUDGET_KEY) || "{}");
+  const budget = Number(budgetData[currentMonth()] || 0);
+
+  const transactionRows = [...entries]
+    .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+    .map(e => `
+      <tr>
+        <td>${esc(e.date)}</td>
+        <td>${esc(e.type)}</td>
+        <td>${esc(e.category)}</td>
+        <td>${esc(e.note)}</td>
+        <td>${money(Number(e.amount || 0))}</td>
+      </tr>
+    `).join("");
+
+  function accountRows(items) {
+    return items.map(item => `
+      <tr>
+        <td>${esc(item.name)}</td>
+        <td>${money(Number(item.originalAmount || 0))}</td>
+        <td>${money(Number(item.totalPaid || 0))}</td>
+        <td>${money(Number(item.remainingAmount || 0))}</td>
+        <td>${esc(item.status || "")}</td>
+      </tr>
+      <tr>
+        <td colspan="5">
+          <strong>পেমেন্ট ইতিহাস:</strong>
+          ${
+            (item.payments || []).length
+              ? item.payments.map(p =>
+                  `${esc(p.date)} — ${money(Number(p.amount || 0))}`
+                ).join("<br>")
+              : "কোনো পেমেন্ট নেই"
+          }
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  const receivableTotal = receivables.reduce(
+    (s, r) => s + Number(r.remainingAmount || 0), 0
+  );
+
+  const debtTotal = debts.reduce(
+    (s, d) => s + Number(d.remainingAmount || 0), 0
+  );
+
+  w.document.open();
+  w.document.write(`
+    <!DOCTYPE html>
+    <html lang="bn">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Money Tracker Report</title>
+      <style>
+        body {
+          font-family: "Noto Sans Bengali", "Noto Sans",
+                       Arial, sans-serif;
+          padding: 20px;
+          color: #222;
+        }
+        h1, h2 { margin-bottom: 8px; }
+        .summary {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
+          margin: 20px 0;
+        }
+        .box {
+          border: 1px solid #ccc;
+          padding: 12px;
+          border-radius: 8px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 12px 0 25px;
+          font-size: 12px;
+        }
+        th, td {
+          border: 1px solid #ccc;
+          padding: 7px;
+          text-align: left;
+          overflow-wrap: anywhere;
+        }
+        th { background: #eee; }
+        @media print {
+          body { padding: 0; }
+          button { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Money Tracker</h1>
+      <p>রিপোর্ট তৈরির তারিখ: ${esc(today())}</p>
+
+      <h2>আর্থিক সারসংক্ষেপ</h2>
+      <div class="summary">
+        <div class="box">মোট আয়<br><strong>${money(total.income)}</strong></div>
+        <div class="box">মোট খরচ<br><strong>${money(total.expense)}</strong></div>
+        <div class="box">অবশিষ্ট ব্যালেন্স<br><strong>${money(total.income - total.expense)}</strong></div>
+        <div class="box">মাসিক বাজেট<br><strong>${money(budget)}</strong></div>
+        <div class="box">মোট পাওনা<br><strong>${money(receivableTotal)}</strong></div>
+        <div class="box">মোট দেনা<br><strong>${money(debtTotal)}</strong></div>
+      </div>
+
+      <h2>লেনদেনের তালিকা</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>তারিখ</th>
+            <th>ধরন</th>
+            <th>ক্যাটাগরি</th>
+            <th>বিবরণ</th>
+            <th>টাকা</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${transactionRows || '<tr><td colspan="5">কোনো লেনদেন নেই</td></tr>'}
+        </tbody>
+      </table>
+
+      <h2>পাওনার তালিকা</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>নাম</th>
+            <th>মূল টাকা</th>
+            <th>পরিশোধ</th>
+            <th>বাকি</th>
+            <th>অবস্থা</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${accountRows(receivables) || '<tr><td colspan="5">কোনো পাওনা নেই</td></tr>'}
+        </tbody>
+      </table>
+
+      <h2>দেনার তালিকা</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>নাম</th>
+            <th>মূল টাকা</th>
+            <th>পরিশোধ</th>
+            <th>বাকি</th>
+            <th>অবস্থা</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${accountRows(debts) || '<tr><td colspan="5">কোনো দেনা নেই</td></tr>'}
+        </tbody>
+      </table>
+
+      <button onclick="window.print()">PDF হিসেবে সংরক্ষণ করো</button>
+    </body>
+    </html>
+  `);
+  w.document.close();
 });
 </script>
  <script>
