@@ -1107,19 +1107,38 @@ $("quickIncome").onclick=()=>openForm("income");$("quickExpense").onclick=()=>op
 $("registerBtn").onclick=async()=>{let email=$("email").value.trim(),password=$("password").value;if(!email||password.length<6){setStatus("ইমেইল দিন এবং অন্তত ৬ অক্ষরের পাসওয়ার্ড লিখুন।");return}try{await createUserWithEmailAndPassword(auth,email,password)}catch(e){setStatus(friendlyError(e))}};
 $("loginBtn").onclick=async()=>{let email=$("email").value.trim(),password=$("password").value;if(!email||!password){setStatus("ইমেইল ও পাসওয়ার্ড লিখুন।");return}try{await signInWithEmailAndPassword(auth,email,password)}catch(e){setStatus(friendlyError(e))}};
 $("logoutBtn").onclick=async()=>{try{await signOut(auth)}catch(e){setStatus(friendlyError(e))}};
-onAuthStateChanged(auth,async user=>{currentUser=user;$("logoutBtn").hidden=!user;$("registerBtn").hidden=!!user;$("loginBtn").hidden=!!user;$("email").disabled=!!user;$("password").disabled=!!user;$("profileChip").textContent=user?(user.email||"T").charAt(0).toUpperCase():"T";if(user){setStatus("লগইন হয়েছে। ক্লাউড হিসাব লোড হচ্ছে…");await refreshCloud()}else{
- $("welcomeMessage").textContent = user
-  ? "আসসালামু আলাইকুম, " +
-    (user.displayName || user.email.split("@")[0]) + "!"
-  : "আসসালামু আলাইকুম!";
- entries=readLocal();
-  localEntries=[...entries];
-  receivables=[];
-  renderReceivables();
-  $("migrateBtn").hidden=true;
-  setStatus("লগআউট আছে: এই ব্রাউজারের স্থানীয় হিসাব দেখানো হচ্ছে।");
-  render()
-}});
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+
+  // Welcome Message
+  $("welcomeMessage").textContent = user
+    ? "আসসালামু আলাইকুম, " +
+      (user.displayName || (user.email || "ব্যবহারকারী").split("@")[0]) + "!"
+    : "আসসালামু আলাইকুম!";
+
+  $("logoutBtn").hidden = !user;
+  $("registerBtn").hidden = !!user;
+  $("loginBtn").hidden = !!user;
+  $("email").disabled = !!user;
+  $("password").disabled = !!user;
+
+  $("profileChip").textContent = user
+    ? (user.email || "T").charAt(0).toUpperCase()
+    : "T";
+
+  if (user) {
+    setStatus("লগইন হয়েছে। ক্লাউড হিসাব লোড হচ্ছে…");
+    await refreshCloud();
+  } else {
+    entries = readLocal();
+    localEntries = [...entries];
+    receivables = [];
+    renderReceivables();
+    $("migrateBtn").hidden = true;
+    setStatus("লগআউট আছে: এই ব্রাউজারের স্থানীয় হিসাব দেখানো হচ্ছে।");
+    render();
+  }
+});
 function icon(e){if(e.type==="income")return"↗";if(e.category==="খাবার")return"🍲";if(e.category==="যাতায়াত")return"🚌";if(e.category==="বাসা ভাড়া")return"🏠";if(e.category==="কেনাকাটা")return"🛍️";if(e.category==="চিকিৎসা")return"💊";if(e.category==="পড়াশোনা")return"📚";if(e.category==="দান-সদকা")return"💚";return"↘"}
 function makeEntry(e){let row=document.createElement("div");row.className="entry";let left=document.createElement("div");left.className="entry-left";let ic=document.createElement("div");ic.className="entry-icon "+(e.type==="expense"?"red":"");ic.textContent=icon(e);let info=document.createElement("div");info.className="entry-info";let title=document.createElement("strong");title.textContent=e.category;let details=document.createElement("small");details.textContent=e.date+(e.note?" · "+e.note:"");info.append(title,details);left.append(ic,info);let right=document.createElement("div");right.className="entry-right";let amount=document.createElement("div");amount.className="amount "+e.type;amount.textContent=(e.type==="income"?"+":"−")+money(e.amount);let del=document.createElement("button");del.className="danger";del.textContent="মুছুন";del.onclick=async()=>{if(!confirm("এই হিসাবটি মুছে ফেলবেন?"))return;try{if(currentUser)await deleteDoc(doc(db,"users",currentUser.uid,"transactions",e.id));else{entries=entries.filter(x=>x.id!==e.id);localStorage.setItem(KEY,JSON.stringify(entries));localEntries=[...entries]}entries=entries.filter(x=>x.id!==e.id);render()}catch(err){alert("হিসাব মুছতে সমস্যা হয়েছে: "+friendlyError(err))}};right.append(amount,del);row.append(left,right);return row}
 function totals(a){return{income:a.filter(e=>e.type==="income").reduce((s,e)=>s+Number(e.amount),0),expense:a.filter(e=>e.type==="expense").reduce((s,e)=>s+Number(e.amount),0)}}
