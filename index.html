@@ -1300,8 +1300,285 @@ function render(){let t=totals(entries);$("totalIncome").textContent=money(t.inc
 };
 $("toggleBalance").onclick=()=>{showBalance=!showBalance;$("toggleBalance").textContent=showBalance?"◉":"◎";render()};$("chartPeriod").onchange=renderChart;$("filter").onchange=render;$("monthFilter").onchange=render;
 $("entryForm").onsubmit=async ev=>{ev.preventDefault();let amount=Number($("amount").value),date=$("date").value;if(!Number.isFinite(amount)||amount<=0||!date){alert("সঠিক টাকার পরিমাণ ও তারিখ দিন।");return}let e={type:$("type").value,amount,category:$("category").value,date,note:$("note").value.trim()},btn=$("saveEntryBtn");btn.disabled=true;try{if(currentUser)entries.push(await saveEntryToCloud(e));else{e.id=Date.now().toString()+Math.random().toString(36).slice(2);entries.push(e);try{localStorage.setItem(KEY,JSON.stringify(entries));localEntries=[...entries]}catch{entries.pop();throw Error("ডেটা সংরক্ষণ করা যায়নি। Backup রাখুন।")}}$("amount").value="";$("note").value="";render();alert(currentUser?"হিসাব অনলাইনে সংরক্ষণ হয়েছে!":"হিসাব এই ব্রাউজারে সংরক্ষণ হয়েছে। অনলাইনে রাখতে লগইন করুন।");closeForm()}catch(err){alert("হিসাব সংরক্ষণ হয়নি: "+friendlyError(err))}finally{btn.disabled=false}};
-$("exportBtn").onclick=()=>{let blob=new Blob([JSON.stringify(entries.map(({id,...e})=>({id,...e})),null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="money-tracker-backup-"+today()+".json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
-$("importFile").onchange=async ev=>{let file=ev.target.files[0];if(!file)return;try{if(file.size>5*1024*1024)throw Error("ফাইলটি অনেক বড়।");let data=JSON.parse(await file.text());if(!Array.isArray(data)||data.length>10000||!data.every(validEntry))throw Error("Backup ফাইল সঠিক নয়।");if(!confirm("Backup-এর "+data.length+"টি হিসাব বর্তমান হিসাবের সঙ্গে যোগ হবে। এগোবেন?"))return;if(currentUser){for(let e of data)await saveEntryToCloud(e);await refreshCloud()}else{entries=[...entries,...data.map(e=>({...e,id:typeof e.id==="string"?e.id:Date.now().toString()+Math.random().toString(36).slice(2)}))];localStorage.setItem(KEY,JSON.stringify(entries));localEntries=[...entries];render()}alert("Backup-এর হিসাব যোগ করা হয়েছে!")}catch(err){alert("Backup যোগ করা যায়নি: "+friendlyError(err))}finally{ev.target.value=""}};
+$("exportBtn").onclick = async () => {
+  if (!currentUser) {
+    alert("সম্পূর্ণ Backup নিতে আগে Firebase অ্যাকাউন্টে লগইন করো।");
+    return;
+  }
+
+  const btn = $("exportBtn");
+  btn.disabled = true;
+
+  try {
+    const uid = currentUser.uid;
+
+    // আয় ও খরচ
+    const transactionSnap = await getDocs(
+      collection(db, "users", uid, "transactions")
+    );
+    const backupEntries = transactionSnap.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
+
+    // সব মাসের বাজেট
+    const budgetSnap = await getDocs(
+      collection(db, "users", uid, "budgets")
+    );
+    const backupBudgets = budgetSnap.docs.map(d => ({
+      id: d.id,
+      ...d.data()
+    }));
+
+    // পাওনা ও পেমেন্ট হিস্ট্রি
+    const receivableSnap = await getDocs(
+      collection(db, "users", uid, "receivables")
+    );
+
+    const backupReceivables = await Promise.all(
+      receivableSnap.docs.map(async d => {
+        const paymentSnap = await getDocs(
+          collection(db, "users", uid, "receivables", d.id, "payments")
+        );
+
+        return {
+          id: d.id,
+          ...d.data(),
+          payments: paymentSnap.docs.map(p => ({
+            id: p.id,
+            ...p.data()
+          }))
+        };
+      })
+    );
+
+    // দেনা ও পেমেন্ট হিস্ট্রি
+    const debtSnap = await getDocs(
+      collection(db, "users", uid, "debts")
+    );
+
+    const backupDebts = await Promise.all(
+      debtSnap.docs.map(async d => {
+        const paymentSnap = await getDocs(
+          collection(db, "users", uid, "debts", d.id, "payments")
+        );
+
+        return {
+          id: d.id,
+          ...d.data(),
+          payments: paymentSnap.docs.map(p => ({
+            id: p.id,
+            ...p.data()
+          }))
+        };
+      })
+    );
+
+    const backup = {
+      app: "Money Tracker",
+      version: 2,
+      exportedAt: new Date().toISOString(),
+      entries: backupEntries,
+      budgets: backupBudgets,
+      receivables: backupReceivables,
+      debts: backupDebts
+    };
+
+    const blob = new Blob(
+      [JSON.stringify(backup, null, 2)],
+      { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "money-tracker-full-backup-" + today() + ".json";
+    a.click();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    alert("সম্পূর্ণ Backup সফল হয়েছে!");
+  } catch (error) {
+    console.error("Backup error:", error);
+    alert("Backup তৈরি হয়নি: " + friendlyError(error));
+  } finally {
+    btn.disabled = false;
+  }
+};
+
+
+$("importFile").onchange = async ev => {
+  const file = ev.target.files[0];
+  if (!file) return;
+
+  try {
+    if (file.size > 10 * 1024 * 1024) {
+      throw Error("ফাইলটি অনেক বড়।");
+    }
+
+    const data = JSON.parse(await file.text());
+
+    // পুরোনো Backup হলে
+    if (Array.isArray(data)) {
+      if (
+        data.length > 10000 ||
+        !data.every(validEntry)
+      ) {
+        throw Error("পুরোনো Backup ফাইল সঠিক নয়।");
+      }
+
+      if (!confirm(
+        "পুরোনো Backup-এর " + data.length +
+        "টি লেনদেন যোগ হবে। এগোবেন?"
+      )) return;
+
+      if (currentUser) {
+        for (const e of data) {
+          const { id, ...entryData } = e;
+
+          await setDoc(
+            doc(db, "users", currentUser.uid, "transactions", id),
+            entryData
+          );
+        }
+
+        await refreshCloud();
+      } else {
+        entries = [
+          ...entries,
+          ...data.map(e => ({
+            ...e,
+            id: e.id || Date.now().toString() +
+              Math.random().toString(36).slice(2)
+          }))
+        ];
+
+        localStorage.setItem(KEY, JSON.stringify(entries));
+        localEntries = [...entries];
+        render();
+      }
+
+      alert("পুরোনো Backup-এর লেনদেন যোগ হয়েছে!");
+      return;
+    }
+
+    // নতুন সম্পূর্ণ Backup
+    if (
+      !data ||
+      data.app !== "Money Tracker" ||
+      data.version !== 2 ||
+      !Array.isArray(data.entries) ||
+      !Array.isArray(data.budgets) ||
+      !Array.isArray(data.receivables) ||
+      !Array.isArray(data.debts)
+    ) {
+      throw Error("Backup ফাইলের ফরম্যাট সঠিক নয়।");
+    }
+
+    if (!currentUser) {
+      throw Error("সম্পূর্ণ Backup Restore করতে আগে লগইন করো।");
+    }
+
+    if (!data.entries.every(validEntry)) {
+      throw Error("লেনদেনের তথ্য সঠিক নয়।");
+    }
+
+    if (!confirm(
+      "এই Backup থেকে আয়-খরচ, বাজেট, পাওনা, দেনা ও পেমেন্ট হিস্ট্রি Restore হবে। একই ID-এর পুরোনো তথ্য প্রতিস্থাপিত হবে। এগোবে?"
+    )) return;
+
+    const uid = currentUser.uid;
+
+    // লেনদেন Restore
+    for (const item of data.entries) {
+      if (!item.id) continue;
+
+      const { id, ...record } = item;
+
+      await setDoc(
+        doc(db, "users", uid, "transactions", id),
+        record
+      );
+    }
+
+    // বাজেট Restore
+    for (const item of data.budgets) {
+      if (!item.id) continue;
+
+      const { id, ...record } = item;
+
+      await setDoc(
+        doc(db, "users", uid, "budgets", id),
+        record
+      );
+    }
+
+    // পাওনা ও পেমেন্ট Restore
+    for (const item of data.receivables) {
+      if (!item.id) continue;
+
+      const { id, payments = [], ...record } = item;
+
+      await setDoc(
+        doc(db, "users", uid, "receivables", id),
+        record
+      );
+
+      for (const payment of payments) {
+        if (!payment.id) continue;
+
+        const { id: paymentId, ...paymentData } = payment;
+
+        await setDoc(
+          doc(
+            db, "users", uid,
+            "receivables", id,
+            "payments", paymentId
+          ),
+          paymentData
+        );
+      }
+    }
+
+    // দেনা ও পেমেন্ট Restore
+    for (const item of data.debts) {
+      if (!item.id) continue;
+
+      const { id, payments = [], ...record } = item;
+
+      await setDoc(
+        doc(db, "users", uid, "debts", id),
+        record
+      );
+
+      for (const payment of payments) {
+        if (!payment.id) continue;
+
+        const { id: paymentId, ...paymentData } = payment;
+
+        await setDoc(
+          doc(
+            db, "users", uid,
+            "debts", id,
+            "payments", paymentId
+          ),
+          paymentData
+        );
+      }
+    }
+
+    await refreshCloud();
+
+    alert("সম্পূর্ণ Backup সফলভাবে Restore হয়েছে!");
+
+  } catch (error) {
+    console.error("Restore error:", error);
+    alert("Restore করা যায়নি: " + friendlyError(error));
+  } finally {
+    ev.target.value = "";
+  }
+};
 $("migrateBtn").onclick=async()=>{if(!currentUser)return;if(!localEntries.length){alert("এই ব্রাউজারে পুরোনো হিসাব পাওয়া যায়নি।");return}if(!confirm("এই ব্রাউজারে থাকা "+localEntries.length+"টি পুরোনো হিসাব "+currentUser.email+" অ্যাকাউন্টে যোগ হবে। এগুলো কি এই অ্যাকাউন্টেরই হিসাব?"))return;$("migrateBtn").disabled=true;try{for(let e of localEntries)await saveEntryToCloud(e);await refreshCloud();setStatus("পুরোনো হিসাব অ্যাকাউন্টে যোগ হয়েছে।");alert("পুরোনো হিসাব ক্লাউড অ্যাকাউন্টে যোগ হয়েছে!")}catch(err){alert("পুরোনো হিসাব যোগ করতে সমস্যা হয়েছে: "+friendlyError(err))}finally{$("migrateBtn").disabled=false}};
 let installPrompt;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPrompt=e;$("installBtn").hidden=false});$("installBtn").onclick=async()=>{if(!installPrompt){alert("Chrome-এর মেনু (⋮) থেকে 'Add to Home screen' বা 'Install app' নির্বাচন করুন।");return}installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$("installBtn").hidden=true};
 render();
