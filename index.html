@@ -910,6 +910,7 @@ import{getFirestore,collection,getDocs,addDoc,deleteDoc,doc,getDoc,setDoc,update
 import{getMessaging,getToken,onMessage}from"https://www.gstatic.com/firebasejs/11.10.0/firebase-messaging.js";
 const firebaseConfig={apiKey:"AIzaSyDG3esUCYtU8jw_4jQGLW_ajzu5Rw4qYMw",authDomain:"takatrack-8c2ec.firebaseapp.com",projectId:"takatrack-8c2ec",storageBucket:"takatrack-8c2ec.firebasestorage.app",messagingSenderId:"116009412611",appId:"1:116009412611:web:982a5ba62a961573368636"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),KEY="takatrack_entries_v1",$=id=>document.getElementById(id);
+let debts = [];
 const messaging = getMessaging(app);
 let receivables = [];
 async function enableNotifications() {
@@ -1968,7 +1969,6 @@ $("debtTabBtn").onclick = () => {
 
 $("debtDate").value = today();
 // ===== দেনার Firebase হিসাব =====
-let debts = [];
 
 function escapeDebtHTML(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({
