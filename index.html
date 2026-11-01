@@ -1838,17 +1838,19 @@ applyTheme(localStorage.getItem('takatrack-theme') || 'light');
 // Profile Dropdown Menu
 
 const profileDropdown = $("profileDropdown");
+const profileChip = $("profileChip");
 
-$("profileChip").style.cursor = "pointer";
+profileChip.style.cursor = "pointer";
 
-$("profileChip").onclick = (event) => {
+profileChip.addEventListener("click", (event) => {
   event.stopPropagation();
+
   profileDropdown.hidden = !profileDropdown.hidden;
-};
+});
 
-profileDropdown.onclick = (event) => {
+profileDropdown.addEventListener("click", (event) => {
   event.stopPropagation();
-};
+});
 
 document.addEventListener("click", () => {
   profileDropdown.hidden = true;
