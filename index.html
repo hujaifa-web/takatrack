@@ -757,6 +757,21 @@ body.dark-theme .entry {
 
   <label>তারিখ</label>
   <input id="receivableDate" type="date" required>
+       <label>কারণ বা বিবরণ (ঐচ্ছিক)</label>
+  <input id="receivableNote" type="text" placeholder="কী কারণে টাকা পাওনা">
+
+  <button type="submit">পাওনা যোগ করো</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h3>📋 পাওনার তালিকা</h3>
+    <div id="receivableSummary"></div>
+    <div id="receivableList">
+      <p class="muted">এখনো কোনো পাওনা যোগ করা হয়নি।</p>
+    </div>
+  </div>
+</section>
 <section class="section" id="profilePage" hidden>
 
   <div class="heading">
