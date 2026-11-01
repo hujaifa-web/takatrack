@@ -577,10 +577,59 @@ body.dark-theme .entry {
 #profilePage #logoutBtn {
   margin-top: 12px;
 }b
+ /* Profile Dropdown Menu */
+.top {
+  position: relative;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 58px;
+  right: 0;
+  width: 220px;
+  padding: 9px;
+  background: var(--panel, #ffffff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.16);
+  z-index: 10000;
+}
+
+.profile-dropdown[hidden] {
+  display: none;
+}
+
+.profile-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 3px 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.profile-dropdown button:hover {
+  background: rgba(128,128,128,0.12);
+}
 </style>
 </head>
 <body>
-<header><div class="top"><div class="brand"><div class="logo">৳</div><div><h1>Money Tracker</h1><p>আপনার টাকা, আপনার হিসাব</p></div></div><div class="avatar" id="profileChip">T</div></div></header>
+<header><div class="top"><div class="brand"><div class="logo">৳</div><div><h1>Money Tracker</h1><p>আপনার টাকা, আপনার হিসাব</p></div></div><div class="avatar" id="profileChip">T</div>
+
+<div class="profile-dropdown" id="profileDropdown" hidden>
+  <button type="button" id="openProfileBtn">👤 আমার প্রোফাইল</button>
+  <button type="button" id="themeMenuBtn">🌙 Dark Mode</button>
+  <button type="button" id="backupMenuBtn">💾 Backup ও Restore</button>
+  <button type="button" id="notificationMenuBtn">🔔 Notification</button>
+  <button type="button" id="aboutMenuBtn">ℹ️ অ্যাপ সম্পর্কে</button>
+</div>
+
+</div></header>
 <main>
 <section class="section" id="homePage">
  <!-- Today's Date Card -->
@@ -1766,31 +1815,15 @@ $("migrateBtn").onclick=async()=>{if(!currentUser)return;if(!localEntries.length
 let installPrompt;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPrompt=e;$("installBtn").hidden=false});$("installBtn").onclick=async()=>{if(!installPrompt){alert("Chrome-এর মেনু (⋮) থেকে 'Add to Home screen' বা 'Install app' নির্বাচন করুন।");return}installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$("installBtn").hidden=true};
 render();
  // Money Tracker Light / Dark Theme
-const themeButton = document.createElement('button');
-themeButton.id = 'themeToggle';
-themeButton.type = 'button';
-themeButton.style.cssText = `
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 9999;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid #d8c58b;
-  background: #ffffff;
-  font-size: 21px;
-  cursor: pointer;
-  box-shadow: 0 3px 12px #0002;
-`;
+
+const themeButton = $("themeMenuBtn");
 
 function applyTheme(theme) {
   document.body.classList.toggle('dark-theme', theme === 'dark');
-  themeButton.textContent = theme === 'dark' ? '☀️' : '🌙';
-  themeButton.setAttribute(
-    'aria-label',
-    theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
-  );
+
+  themeButton.textContent =
+    theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+
   localStorage.setItem('takatrack-theme', theme);
 }
 
@@ -1799,8 +1832,53 @@ themeButton.addEventListener('click', () => {
   applyTheme(isDark ? 'light' : 'dark');
 });
 
-document.body.appendChild(themeButton);
 applyTheme(localStorage.getItem('takatrack-theme') || 'light');
+
+
+// Profile Dropdown Menu
+
+const profileDropdown = $("profileDropdown");
+
+$("profileChip").style.cursor = "pointer";
+
+$("profileChip").onclick = (event) => {
+  event.stopPropagation();
+  profileDropdown.hidden = !profileDropdown.hidden;
+};
+
+profileDropdown.onclick = (event) => {
+  event.stopPropagation();
+};
+
+document.addEventListener("click", () => {
+  profileDropdown.hidden = true;
+});
+
+
+// Menu Buttons
+
+$("openProfileBtn").onclick = () => {
+  profileDropdown.hidden = true;
+  setPage("profilePage");
+};
+
+$("backupMenuBtn").onclick = () => {
+  profileDropdown.hidden = true;
+  setPage("profilePage");
+  $("exportBtn").scrollIntoView({ behavior: "smooth", block: "center" });
+};
+
+$("notificationMenuBtn").onclick = () => {
+  profileDropdown.hidden = true;
+  $("enableNotificationsBtn").click();
+};
+
+$("aboutMenuBtn").onclick = () => {
+  profileDropdown.hidden = true;
+  alert("Money Tracker\\nআপনার টাকা, আপনার হিসাব।\\nVersion 1.0");
+};
+
+$("enableNotificationsBtn").onclick = enableNotifications;
 $("enableNotificationsBtn").onclick = enableNotifications;
 // ===== পাওনা ও দেনা ট্যাব =====
 const receivableSection = $("receivablesPage");
