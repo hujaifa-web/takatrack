@@ -616,6 +616,64 @@ body.dark-theme .entry {
 .profile-dropdown button:hover {
   background: rgba(128,128,128,0.12);
 }
+
+/* ===== TakaTrack UI refresh: responsive layout + readable profile menu ===== */
+:root{
+  --primary:#087f5b; --border:#e3ebe6; --panel:#fff;
+  --surface:#f5f8f6; --text:#17352a;
+}
+body{background:#f3f7f4;color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Bengali","Segoe UI",sans-serif}
+header{position:relative;z-index:20;padding:calc(18px + env(safe-area-inset-top)) 18px 88px}
+.top{width:100%;max-width:760px;min-height:58px;gap:12px}
+.brand{min-width:0}.brand h1{font-size:clamp(20px,5vw,25px);letter-spacing:-.4px}
+.brand p{font-size:13px}.avatar{flex:0 0 44px;width:44px;height:44px;border-radius:50%;font-size:17px}
+.profile-dropdown{
+  position:absolute;top:calc(100% + 10px);right:0;
+  width:min(270px,calc(100vw - 36px));padding:8px;
+  background:#fff!important;color:#17352a!important;
+  border:1px solid #dfe9e2;border-radius:18px;
+  box-shadow:0 18px 48px rgba(9,45,31,.22);z-index:10001;
+}
+.profile-dropdown[hidden]{display:none!important}
+.profile-dropdown button{
+  display:flex;align-items:center;gap:10px;width:100%;min-height:48px;
+  padding:12px 13px;margin:2px 0;background:transparent!important;
+  color:#17352a!important;text-align:left;font-size:14px;font-weight:700;
+  border:0;border-radius:12px;white-space:normal;
+}
+.profile-dropdown button:active,.profile-dropdown button:hover{background:#eaf5ee!important}
+main{position:relative;z-index:1;max-width:760px;margin:-62px auto 0;padding:0 15px 18px}
+.section{min-width:0}
+#profilePage{padding-top:4px}
+#profilePage>.heading{margin:8px 3px 15px}
+#profilePage>.heading h2{font-size:21px}
+#profilePage .panel{padding:18px;border:1px solid #e7eee9;border-radius:20px;background:#fff;box-shadow:0 8px 24px rgba(15,55,35,.055);margin:0 0 14px}
+#profilePage .panel h2{color:#173c2e}
+#profilePage .hint{font-size:13px;line-height:1.75;color:#75857b}
+#profilePage #authStatus{overflow-wrap:anywhere;color:#52645a;background:#f3f7f4}
+#profilePage input{width:100%;min-height:50px;background:#fbfdfb;border:1px solid #dce7df}
+#profilePage button{min-height:48px}
+#profilePage .auth-grid{grid-template-columns:1fr 1fr;gap:10px}
+#profilePage .auth-grid button{font-size:13px;padding:11px 7px}
+.card,.panel,.entry{background:#fff}
+button{ -webkit-tap-highlight-color:transparent}
+input,select{min-height:46px;font-size:15px}
+button.primary,button.secondary{min-height:48px}
+.nav{z-index:30;box-shadow:0 -8px 28px rgba(12,45,31,.08);padding-top:9px}
+.nav button{min-width:0;line-height:1.3}
+footer{padding-bottom:18px}
+@media(max-width:420px){
+  header{padding-left:16px;padding-right:16px}
+  main{padding-left:12px;padding-right:12px}
+  .profile-dropdown{right:0}
+  #profilePage .panel{padding:16px}
+  .grid{gap:9px}
+}
+@media(prefers-reduced-motion:no-preference){
+  .profile-dropdown{animation:menuIn .14s ease-out}
+  @keyframes menuIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+}
+
 </style>
 </head>
 <body>
