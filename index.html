@@ -2670,6 +2670,74 @@ onAuthStateChanged(auth, async user => {
           body { padding: 0; }
           button { display: none; }
         }
+        /* ===== FINAL HEADER & DATE OVERLAP FIX ===== */
+
+/* Header আর content-এর overlap বন্ধ */
+body > header {
+  position: relative !important;
+  top: auto !important;
+  padding-top: calc(18px + env(safe-area-inset-top)) !important;
+  padding-bottom: 24px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  z-index: 5 !important;
+}
+
+/* Main content-কে header-এর নিচে নামানো */
+body > header + main {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: 760px !important;
+  margin: 0 auto !important;
+  padding: 16px 14px 100px !important;
+  top: auto !important;
+  transform: none !important;
+  z-index: 1 !important;
+}
+
+/* Date card */
+#todayDateCard {
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  margin: 0 0 16px 0 !important;
+  padding: 20px !important;
+  border-radius: 22px !important;
+  background: #fff !important;
+  color: #17372b !important;
+  border: 1px solid #e5d7a6 !important;
+  box-shadow: 0 8px 24px rgba(0,60,35,.08) !important;
+  overflow: visible !important;
+}
+
+#todayDate {
+  display: block !important;
+  font-size: 20px !important;
+  line-height: 1.7 !important;
+  font-weight: 800 !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Balance card spacing */
+#homePage > .balance {
+  margin-top: 0 !important;
+}
+
+/* Mobile spacing */
+@media (max-width: 430px) {
+  body > header + main {
+    padding: 14px 12px 100px !important;
+  }
+
+  #todayDateCard {
+    padding: 17px !important;
+  }
+
+  #todayDate {
+    font-size: 18px !important;
+  }
+}
       </style>
     </head>
     <body>
