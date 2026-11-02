@@ -673,7 +673,244 @@ footer{padding-bottom:18px}
   .profile-dropdown{animation:menuIn .14s ease-out}
   @keyframes menuIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 }
+/* =================================
+   MONEY TRACKER — PREMIUM DESIGN
+================================= */
 
+:root {
+  --premium-green: #087f5b;
+  --premium-dark: #064e3b;
+  --premium-light: #e5f5ec;
+  --premium-gold: #e8d58a;
+  --premium-text: #17372b;
+  --premium-muted: #78877f;
+  --premium-border: #e1eae4;
+  --premium-shadow: 0 10px 30px rgba(5, 70, 45, 0.09);
+}
+
+/* Main background */
+body {
+  background: linear-gradient(
+    180deg,
+    #eaf5ee 0%,
+    #f7faf8 45%,
+    #edf5f0 100%
+  );
+  color: var(--premium-text);
+  font-family: system-ui, sans-serif;
+}
+
+/* Header */
+header {
+  background:
+    radial-gradient(
+      circle at 95% 10%,
+      rgba(235, 207, 112, 0.35),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      #064e3b,
+      #07845d,
+      #086b50
+    );
+  border-radius: 0 0 32px 32px;
+}
+
+/* Main content */
+main {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* All panels */
+.panel {
+  background: #ffffff;
+  border: 1px solid var(--premium-border);
+  border-radius: 23px;
+  box-shadow: var(--premium-shadow);
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+/* Dashboard cards */
+.card {
+  background: linear-gradient(
+    145deg,
+    #ffffff,
+    #f5faf7
+  );
+  border: 1px solid #e2ece5;
+  border-radius: 23px;
+  box-shadow: var(--premium-shadow);
+  padding: 18px;
+}
+
+/* Balance card */
+.balance {
+  background: linear-gradient(
+    135deg,
+    #064e3b,
+    #087f5b 65%,
+    #0b6c50
+  );
+  color: #ffffff;
+  border: 1px solid var(--premium-gold);
+  border-radius: 27px;
+  box-shadow: 0 15px 35px rgba(4, 75, 50, 0.2);
+  padding: 25px;
+}
+
+.balance .muted {
+  color: #d7eee3;
+}
+
+/* Headings */
+h2, h3 {
+  color: #173d2f;
+  font-weight: 800;
+}
+
+/* Form labels */
+label {
+  display: block;
+  color: #28483a;
+  font-weight: 700;
+  margin: 13px 0 7px;
+}
+
+/* Input fields */
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 49px;
+  padding: 12px 14px;
+  border: 1px solid #dce7df;
+  border-radius: 14px;
+  background: #fbfdfb;
+  color: #17372b;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #087f5b;
+  box-shadow: 0 0 0 3px rgba(8, 127, 91, 0.13);
+}
+
+/* Buttons */
+button {
+  border-radius: 14px;
+  font-weight: 750;
+  min-height: 45px;
+  transition: 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Primary buttons */
+button.primary,
+form button[type="submit"] {
+  background: linear-gradient(
+    110deg,
+    #0b9667,
+    #075c43
+  );
+  color: #ffffff;
+  border: 1px solid #087f5b;
+  box-shadow: 0 5px 14px rgba(8, 127, 91, 0.18);
+}
+
+/* Secondary buttons */
+button.secondary {
+  background: #e7f6ed;
+  color: #075b43;
+  border: 1px solid #c8e5d3;
+}
+
+/* Income */
+.income {
+  color: #07865d;
+}
+
+/* Expense */
+.expense {
+  color: #d94b4b;
+}
+
+/* Transaction cards */
+.entry {
+  background: #ffffff;
+  border: 1px solid #e4ece6;
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 5px 15px rgba(10, 65, 42, 0.045);
+}
+
+/* Receivable and debt list */
+#receivableList > *,
+#debtList > * {
+  background: #fcfefc;
+  border: 1px solid #e2ebe4;
+  border-radius: 18px;
+  padding: 16px;
+  margin: 12px 0;
+}
+
+/* Bottom navigation */
+.nav {
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid #e6eee8;
+  box-shadow: 0 -8px 25px rgba(10, 50, 30, 0.07);
+}
+
+/* Profile cards */
+#profilePage .panel {
+  margin-bottom: 16px;
+}
+
+/* Mobile design */
+@media (max-width: 430px) {
+
+  main {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .panel {
+    padding: 15px;
+    border-radius: 20px;
+  }
+
+  .card {
+    padding: 15px;
+    border-radius: 20px;
+  }
+
+  .balance {
+    padding: 22px;
+    border-radius: 24px;
+  }
+
+  .grid {
+    gap: 10px;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 14px;
+  }
+}
 </style>
 </head>
 <body>
