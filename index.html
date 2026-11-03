@@ -1000,6 +1000,19 @@ header .top {
   visibility: visible !important;
   opacity: 1 !important;
 }
+ /* Separate Date Card */
+#todayDateCard {
+  display: block !important;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 0 18px !important;
+  padding: 20px !important;
+  border: 1px solid #b8dfc7 !important;
+  border-radius: 20px !important;
+  background: linear-gradient(135deg, #ffffff, #e8f7ee) !important;
+  position: relative;
+  z-index: 2;
+}
 </style>
 </head>
 <body>
@@ -1016,22 +1029,18 @@ header .top {
 </div></header>
 <main>
 <section class="section" id="homePage">
-<!-- Today's Date Card -->
-<div class="panel">
-  <div class="date-card" id="todayDateCard">
+<!-- Separate Date Card -->
+<div class="date-card" id="todayDateCard">
+  <div class="date-welcome" id="welcomeMessage">
+    আসসালামু আলাইকুম, hujaifa.712!
+  </div>
 
-    <div class="date-welcome" id="welcomeMessage">
-      আসসালামু আলাইকুম, hujaifa.712!
-    </div>
+  <div class="date-main" id="todayDate">
+    মঙ্গলবার, ৩ নভেম্বর, ২০২৬
+  </div>
 
-    <div class="date-main" id="todayDate">
-      মঙ্গলবার, ৩ নভেম্বর, ২০২৬
-    </div>
-
-    <div class="date-greeting" id="todayGreeting">
-      আল্লাহ আপনার দিনটি বরকতপূর্ণ করুন।
-    </div>
-
+  <div class="date-greeting" id="todayGreeting">
+    আল্লাহ আপনার দিনটি বরকতপূর্ণ করুন।
   </div>
 </div>
 
