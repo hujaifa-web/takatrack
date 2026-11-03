@@ -941,6 +941,21 @@ button.secondary {
   font-weight: 800 !important;
   color: #164b35 !important;
 }
+ /* Reduce the outer border around date card */
+#homePage > .panel:first-child {
+  padding: 8px !important;
+  margin-bottom: 14px !important;
+  overflow: visible !important;
+}
+
+/* Keep date card fully visible */
+#todayDateCard {
+  width: 100% !important;
+  margin: 0 !important;
+  position: relative !important;
+  z-index: 20 !important;
+  box-sizing: border-box !important;
+}
 </style>
 </head>
 <body>
