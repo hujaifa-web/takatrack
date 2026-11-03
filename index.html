@@ -968,6 +968,38 @@ header .top {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
+ /* FIX DATE CARD VISIBILITY */
+#homePage > .panel:first-child {
+  padding: 14px !important;
+  overflow: visible !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+#todayDateCard {
+  display: block !important;
+  position: relative !important;
+  z-index: 30 !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 110px !important;
+  margin: 10px 0 18px !important;
+  padding: 20px !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+#todayDateCard .date-welcome,
+#todayDateCard .date-main,
+#todayDateCard .date-greeting {
+  display: block !important;
+  position: relative !important;
+  z-index: 2 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
 </style>
 </head>
 <body>
